@@ -1,8 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Workspace from "./components/Workspace.vue";
+import * as gcm from "syzygy_gcm";
+</script>
 
 <template>
   <main>
-    <h1>Hello world!</h1>
+    <Workspace />
   </main>
 </template>
 
