@@ -11,7 +11,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "syzygy_gcm": "file:./libs/sygyzy_gcm/pkg",
+    "gcm": "file:./libs/gcm/pkg",
     "modern-normalize": "^1.1.0",
     "vue": "^3.2.45"
   },

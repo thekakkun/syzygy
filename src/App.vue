@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Workspace from "./components/Workspace.vue";
-import * as gcm from "syzygy_gcm";
+import * as gcm from "gcm";
 </script>
 
 <template>

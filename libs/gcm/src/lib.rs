@@ -1,13 +1,13 @@
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
+use element::parameter::Param;
+
+pub mod element;
 
 #[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, world!");
+pub struct SlvsSystem {
+    param: Vec<Param>,
+    // entity: Vec<entity::SlvsEntity>,
 }
 
 pub fn add(left: usize, right: usize) -> usize {
