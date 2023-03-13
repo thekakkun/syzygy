@@ -24,7 +24,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
     ],
   },
@@ -36,14 +36,14 @@ module.exports = {
       ".mjs": [".mjs", ".mts"],
     },
   },
-  output: {
-    path: path.resolve(__dirname, "dist/"),
-    publicPath: "/dist/",
-    filename: "bundle.js",
-  },
   devServer: {
     static: path.join(__dirname, "public"),
     port: 3000,
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
+  output: {
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist/"),
+    publicPath: "/dist/",
+  },
 };
