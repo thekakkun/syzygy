@@ -30,6 +30,7 @@
     "eslint-plugin-react": "^7.32.2",
     "postcss": "^8.4.21",
     "postcss-loader": "^7.0.2",
+    "postcss-nested": "^6.0.1",
     "postcss-preset-env": "^8.0.1",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.4.2",

@@ -4,17 +4,22 @@ const webpack = require("webpack");
 module.exports = {
   entry: "./src/index.tsx",
   mode: "development",
+  output: {
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist/"),
+    publicPath: "/dist/",
+  },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /(node_modules|bower_components)/,
+        include: path.resolve(__dirname, "src"),
         loader: "babel-loader",
         options: { presets: ["@babel/env"] },
       },
       {
         test: /\.([cm]?ts|tsx)$/,
-        exclude: "/node_modules",
+        include: path.resolve(__dirname, "src"),
         loader: "ts-loader",
         options: {
           compilerOptions: {
@@ -24,7 +29,20 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader", "postcss-loader"],
+        include: path.resolve(__dirname, "src"),
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+              modules: {
+                localIdentName: "[local]--[hash:base64:5]",
+              },
+            },
+          },
+          "postcss-loader",
+        ],
       },
     ],
   },
@@ -36,14 +54,10 @@ module.exports = {
       ".mjs": [".mjs", ".mts"],
     },
   },
+  plugins: [new webpack.HotModuleReplacementPlugin()],
   devServer: {
     static: path.join(__dirname, "public"),
     port: 3000,
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
-  output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "dist/"),
-    publicPath: "/dist/",
-  },
+  devtool: "eval-cheap-module-source-map",
 };
