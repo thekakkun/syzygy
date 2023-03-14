@@ -1,8 +1,9 @@
-import Canvas from "./components/Canvas";
-import Tools from "./components/Tools";
 import styles from "./App.module.css";
-import Properties from "./components/Properties";
+import "./assets/main.css";
+import Canvas from "./components/Canvas";
 import Objects from "./components/Objects";
+import Properties from "./components/Properties";
+import Tools from "./components/Tools";
 
 function App() {
   return (
