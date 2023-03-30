@@ -12,6 +12,10 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
 
+  async function slvs_test() {
+    setGreetMsg(await invoke("slvs_test",));
+  }
+
   return (
     <div className="container">
       <h1>Welcome to Tauri!</h1>
@@ -34,7 +38,7 @@ function App() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            greet();
+            slvs_test();
           }}
         >
           <input
