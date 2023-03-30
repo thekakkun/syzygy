@@ -1,5 +1,4 @@
 import styles from "./App.module.css";
-import "./assets/main.css";
 import Canvas from "./components/Canvas";
 import Objects from "./components/Objects";
 import Properties from "./components/Properties";

@@ -1,9 +1,7 @@
 const path = require("path");
-const webpack = require("webpack");
 
 module.exports = {
   entry: "./src/index.tsx",
-  mode: "development",
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist/"),
@@ -54,10 +52,9 @@ module.exports = {
       ".mjs": [".mjs", ".mts"],
     },
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+
   devServer: {
     static: path.join(__dirname, "public"),
     port: 3000,
   },
-  devtool: "eval-cheap-module-source-map",
 };
