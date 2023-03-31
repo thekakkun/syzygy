@@ -1,7 +1,15 @@
-# Tauri + React + Typescript
+# Syzygy
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Syzygy is a parametric vector editor
 
-## Recommended IDE Setup
+## Tech Stack
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+### Front End
+
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+
+### Back End
+
+- [Tauri](https://tauri.app/)
+- [SolveSpace](https://solvespace.com/index.pl)
