@@ -9,7 +9,7 @@ fn greet(name: &str) -> String {
 
 #[tauri::command]
 fn slvs_test() -> String {
-    rust_slvs::example_3d().to_string()
+    slvs::example_3d().to_string()
 }
 
 fn main() {
