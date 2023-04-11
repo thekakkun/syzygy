@@ -1,0 +1,5 @@
+.objects {
+  background-color: green;
+  grid-column: 3/4;
+  grid-row: 2/3;
+}
