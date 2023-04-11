@@ -2027,16 +2027,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1"
 
 [[package]]
-name = "rust_slvs"
-version = "0.1.0"
-source = "git+https://github.com/thekakkun/rust_slvs.git#979c1ea9aa3119747a32c9f3e9e9003ace1f0fab"
-dependencies = [
- "bindgen",
- "cc",
- "dunce",
-]
-
-[[package]]
 name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2280,6 +2270,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "slvs"
+version = "0.0.0"
+source = "git+https://github.com/thekakkun/rust_slvs.git?branch=dev#1b226c419f061e61d3574e78322da276710d15d4"
+dependencies = [
+ "bindgen",
+ "cc",
+ "dunce",
+]
+
+[[package]]
 name = "smallvec"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2412,9 +2412,9 @@ dependencies = [
 name = "syzygy"
 version = "0.0.0"
 dependencies = [
- "rust_slvs",
  "serde",
  "serde_json",
+ "slvs",
  "tauri",
  "tauri-build",
 ]
