@@ -1,5 +1,5 @@
-import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { moveTo } from "../features/cursor/cursorSlice";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { moveTo } from "./cursorSlice";
 import style from "./Workspace.module.css";
 
 export default function Workspace() {
