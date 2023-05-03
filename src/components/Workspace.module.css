@@ -1,5 +1,12 @@
 .workspace {
-  background-color: orange;
+  background-color: #aaa;
   grid-column: 2/3;
   grid-row: 1/3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .canvas {
+    background-color: #fff;
+  }
 }

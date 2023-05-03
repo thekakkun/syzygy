@@ -2271,12 +2271,13 @@ dependencies = [
 
 [[package]]
 name = "slvs"
-version = "0.0.0"
-source = "git+https://github.com/thekakkun/rust_slvs.git?branch=dev#1b226c419f061e61d3574e78322da276710d15d4"
+version = "0.5.0"
+source = "git+https://github.com/thekakkun/rust_slvs.git?branch=dev#6ead55bbe8e501dfb6109a1b9948ba248908cb89"
 dependencies = [
  "bindgen",
  "cc",
  "dunce",
+ "serde",
 ]
 
 [[package]]
