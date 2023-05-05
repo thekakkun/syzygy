@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import cursorReducer from "../features/workspace/cursorSlice";
+import canvasReducer from "../features/workspace/canvasSlice";
 
 export const store = configureStore({
   reducer: {
-    cursor: cursorReducer,
+    canvas: canvasReducer,
   },
 });
 

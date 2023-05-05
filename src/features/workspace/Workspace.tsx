@@ -1,9 +1,8 @@
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { moveTo } from "./cursorSlice";
+import { useAppDispatch } from "../../app/hooks";
+import { setPointer } from "./canvasSlice";
 import style from "./Workspace.module.css";
 
 export default function Workspace() {
-  const cursor = useAppSelector((state) => state.cursor);
   const dispatch = useAppDispatch();
 
   return (
@@ -14,7 +13,7 @@ export default function Workspace() {
         height={500}
         onMouseMove={(e) =>
           dispatch(
-            moveTo({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
+            setPointer({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
           )
         }
       ></svg>

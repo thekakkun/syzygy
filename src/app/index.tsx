@@ -4,11 +4,19 @@ import App from "./App";
 import "./styles.css";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import { initCanvas } from "../features/workspace/canvasSlice";
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Provider>
-);
+async function main() {
+  if (!store.getState().canvas.canvas) {
+    store.dispatch(initCanvas());
+  }
+
+  ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+    <Provider store={store}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </Provider>
+  );
+}
+main();
