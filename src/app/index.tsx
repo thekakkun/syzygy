@@ -4,11 +4,13 @@ import App from "./App";
 import "./styles.css";
 import { Provider } from "react-redux";
 import { store } from "./store";
-import { initCanvas } from "../features/workspace/canvasSlice";
+import { invoke } from "@tauri-apps/api";
 
 async function main() {
-  if (!store.getState().canvas.canvas) {
-    store.dispatch(initCanvas());
+  try {
+    let res = await invoke("init_canvas");
+  } catch (e) {
+    console.log(e);
   }
 
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

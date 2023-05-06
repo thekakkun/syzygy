@@ -12,20 +12,31 @@ use std::sync::Mutex;
 use tauri::State;
 
 struct Drawing(Mutex<System>);
+struct Canvas(Mutex<Option<Entity<Workplane>>>);
 
 #[tauri::command]
-fn init_canvas(sys_state: State<Drawing>) -> Result<Entity<Workplane>, &'static str> {
-    let mut sys = sys_state.0.lock().unwrap();
-    let g = sys.add_group();
+fn init_canvas(
+    sys_state: State<Drawing>,
+    canvas_state: State<Canvas>,
+) -> Result<Entity<Workplane>, &'static str> {
+    let mut canvas_state = canvas_state.0.lock().unwrap();
 
-    let origin = sys.sketch(Point::<In3d>::new(g, 0.0, 0.0, 0.0))?;
+    if let Some(canvas) = *canvas_state {
+        Ok(canvas)
+    } else {
+        let mut sys = sys_state.0.lock().unwrap();
+        let g = sys.add_group();
 
-    let normal = sys.sketch(Normal::new_in_3d(
-        g,
-        make_quaternion([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]),
-    ))?;
+        let origin = sys.sketch(Point::<In3d>::new(g, 0.0, 0.0, 0.0))?;
 
-    sys.sketch(Workplane::new(g, origin, normal))
+        let normal = sys.sketch(Normal::new_in_3d(
+            g,
+            make_quaternion([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]),
+        ))?;
+
+        *canvas_state = Some(sys.sketch(Workplane::new(g, origin, normal))?);
+        Ok(canvas_state.unwrap())
+    }
 }
 
 #[tauri::command]
@@ -36,20 +47,26 @@ fn add_group(state: State<Drawing>) -> Group {
 
 #[tauri::command]
 fn add_point(
-    canvas: Entity<Workplane>,
     group: Group,
     x: f64,
     y: f64,
     sys_state: State<Drawing>,
+    canvas_state: State<Canvas>,
 ) -> Result<Entity<Point<OnWorkplane>>, &'static str> {
     let mut sys = sys_state.0.lock().unwrap();
+    let canvas = canvas_state.0.lock().unwrap();
 
-    sys.sketch(Point::<OnWorkplane>::new(group, canvas, x, y))
+    if let Some(canvas) = *canvas {
+        sys.sketch(Point::<OnWorkplane>::new(group, canvas, x, y))
+    } else {
+        Err("No canvas initialized")
+    }
 }
 
 fn main() {
     tauri::Builder::default()
         .manage(Drawing(Default::default()))
+        .manage(Canvas(Mutex::new(None)))
         .invoke_handler(tauri::generate_handler![init_canvas, add_group, add_point])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
