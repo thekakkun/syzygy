@@ -1,71 +1,76 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Coords } from "../workspace/cursorSlice";
-import { SliceState } from "../types";
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
+import { Coords, SliceState } from "../types";
 
 export interface EntityHandle {
-  h: number;
+  handle: number;
   phantom: null;
 }
 
-interface EntityData {}
-
-export interface Point extends EntityData {
-  x: number;
-  y: number;
+interface EntityData {
+  h: number;
 }
+
+export interface Point extends EntityData, Coords {}
+
+export const addPoint = createAsyncThunk(
+  "entities/addPoint",
+  async (arg: { group: number; point: Coords }) => {
+    let { group, point } = arg;
+
+    const response: EntityHandle = await invoke("add_point", {
+      group,
+      x: point.x,
+      y: point.y,
+    });
+
+    return response;
+  }
+);
 
 interface Line extends EntityData {
   p1: Point;
   p2: Point;
 }
 
-interface Entities {
-  [h: number]: EntityData;
-}
+const entitiesAdapter = createEntityAdapter<EntityData>({
+  selectId: (entity) => entity.h,
+  sortComparer: (a, b) => a.h - b.h,
+});
 
-interface EntitiesState extends SliceState {
-  entities: Entities;
-}
-
-const initialState: EntitiesState = {
-  entities: {} as Entities,
-  status: "idle",
-  error: null,
-};
-
-export const addPoint = createAsyncThunk(
-  "entities/AddPoint",
-  async (point_data: { group: number; x: number; y: number }) => {
-    let { group, x, y } = point_data;
-    const response: EntityHandle = await invoke("add_point", {
-      group,
-      x,
-      y,
-    });
-
-    return { [response.h]: { x, y } } as Entities;
-  }
-);
-
-export const entitiesSlice = createSlice({
+const entitiesSlice = createSlice({
   name: "entities",
-  initialState,
+  initialState: entitiesAdapter.getInitialState({
+    status: "idle",
+    error: null,
+  } as SliceState),
   reducers: {},
-  extraReducers(builder) {
+  extraReducers: (builder) => {
     builder
       .addCase(addPoint.pending, (state, action) => {
         state.status = "pending";
       })
       .addCase(addPoint.fulfilled, (state, action) => {
+        console.log(action.payload);
+        entitiesAdapter.addOne(state, {
+          h: action.payload.handle,
+          x: action.meta.arg.point.x,
+          y: action.meta.arg.point.y,
+        } as Point);
         state.status = "succeeded";
-        state.entities = { ...state.entities, ...action.payload };
       })
       .addCase(addPoint.rejected, (state, action) => {
         state.status = "failed";
-        state.error = "could not add point";
+        state.error = action.error.message ?? null;
+        console.log(action.error.message)
       });
   },
 });
+
+export const {} = entitiesSlice.actions;
 
 export default entitiesSlice.reducer;

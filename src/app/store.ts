@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import canvasReducer from "../features/workspace/canvasSlice";
+import entitiesReducer from "../features/drawing/entitiesSlice";
 
 export const store = configureStore({
   reducer: {
     canvas: canvasReducer,
+    entities: entitiesReducer,
   },
 });
 

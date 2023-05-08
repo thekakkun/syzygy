@@ -1,17 +1,13 @@
 import style from "./Status.module.css";
 import { useAppSelector } from "../app/hooks";
-import { useEffect } from "react";
 
 export default function Status() {
-  const canvas = useAppSelector((state) => state.canvas);
-  useEffect(() => {
-    console.log(canvas);
-  }, [canvas]);
+  const pointer = useAppSelector((state) => state.canvas.pointer);
 
   return (
     <div className={style.status}>
       <p>
-        ({canvas.pointer.x}, {canvas.pointer.y})
+        ({pointer.x}, {pointer.y})
       </p>
     </div>
   );

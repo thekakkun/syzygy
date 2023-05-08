@@ -8,7 +8,7 @@ import { invoke } from "@tauri-apps/api";
 
 async function main() {
   try {
-    let res = await invoke("init_canvas");
+    await invoke("init_canvas");
   } catch (e) {
     console.log(e);
   }

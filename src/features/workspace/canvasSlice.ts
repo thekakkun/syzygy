@@ -1,24 +1,21 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { EntityHandle, Point } from "../drawing/entitiesSlice";
-import { SliceState } from "../types";
-import { invoke } from "@tauri-apps/api";
-import { MouseEvent } from "react";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { Coords } from "../types";
 
-interface CanvasState extends SliceState {
-  pointer: Point;
+
+
+interface CanvasState {
+  pointer: Coords;
 }
 
 const initialState: CanvasState = {
   pointer: { x: 0, y: 0 },
-  status: "idle",
-  error: null,
 };
 
 export const canvasSlice = createSlice({
   name: "canvas",
   initialState,
   reducers: {
-    setPointer: (state, action: PayloadAction<Point>) => {
+    setPointer: (state, action: PayloadAction<Coords>) => {
       state.pointer = action.payload;
     },
   },
