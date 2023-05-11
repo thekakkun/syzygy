@@ -1,17 +1,9 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setPointer } from "./canvasSlice";
 import style from "./Workspace.module.css";
-import { addPoint } from "../drawing/entitiesSlice";
-import { useEffect } from "react";
 
 export default function Workspace() {
   const dispatch = useAppDispatch();
-  const point = useAppSelector((state) => state.canvas.pointer);
-  const entities = useAppSelector((state) => state.entities.entities);
-
-  useEffect(() => {
-    console.log(entities);
-  }, [entities]);
 
   return (
     <div className={style.workspace}>
@@ -24,9 +16,6 @@ export default function Workspace() {
             setPointer({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
           )
         }
-        onClick={(e) => {
-          dispatch(addPoint({ group: 1, point: point }));
-        }}
       ></svg>
     </div>
   );

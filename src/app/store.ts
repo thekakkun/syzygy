@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import canvasReducer from "../features/workspace/canvasSlice";
-import entitiesReducer from "../features/drawing/entitiesSlice";
+import { slvsSlice } from "../features/slvs/slvsSlice";
 
 export const store = configureStore({
   reducer: {
     canvas: canvasReducer,
-    entities: entitiesReducer,
+    [slvsSlice.reducerPath]: slvsSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(slvsSlice.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,38 +1,21 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod constraints;
+mod entities;
+mod groups;
+
 use slvs::{
     entity::{EntityHandle, Normal, Point, Workplane},
-    group::Group,
     make_quaternion,
-    target::{In3d, OnWorkplane},
+    target::In3d,
     System,
 };
 use std::sync::Mutex;
-use tauri::{Manager, State};
+use tauri::Manager;
 
-struct Drawing(Mutex<System>);
-struct Canvas(EntityHandle<Workplane>);
-
-#[tauri::command]
-fn add_group(state: State<Drawing>) -> Group {
-    let mut sys = state.0.lock().unwrap();
-    sys.add_group()
-}
-
-#[tauri::command]
-fn add_point(
-    group: Group,
-    x: f64,
-    y: f64,
-    sys_state: State<Drawing>,
-    canvas_state: State<Canvas>,
-) -> Result<EntityHandle<Point<OnWorkplane>>, &'static str> {
-    let mut sys = sys_state.0.lock().unwrap();
-    let canvas = canvas_state.0;
-
-    sys.sketch(Point::<OnWorkplane>::new(group, canvas, x, y))
-}
+pub struct Drawing(Mutex<System>);
+pub struct Canvas(EntityHandle<Workplane>);
 
 fn main() {
     tauri::Builder::default()
@@ -51,7 +34,13 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![add_group, add_point])
+        .invoke_handler(tauri::generate_handler![
+            groups::get_groups,
+            groups::add_group,
+            groups::delete_group,
+            entities::get_entities,
+            entities::add_point
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

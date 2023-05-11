@@ -7,3 +7,8 @@ export interface Coords {
   x: number;
   y: number;
 }
+
+export interface Handle {
+  handle: number;
+  phantom: null;
+}

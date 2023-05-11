@@ -1,8 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Coords } from "../types";
 
-
-
 interface CanvasState {
   pointer: Coords;
 }
