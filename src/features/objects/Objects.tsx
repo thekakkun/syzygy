@@ -4,7 +4,7 @@ import {
   useAddGroupMutation,
   useDeleteGroupMutation,
   useGetGroupsQuery,
-} from "../slvs/slvsSlice";
+} from "../slvs/slvsGroupsSlice";
 
 export default function Objects() {
   const { data: groups, isLoading, isSuccess } = useGetGroupsQuery();
@@ -13,7 +13,7 @@ export default function Objects() {
 
   return (
     <div className={style.objects}>
-      <button onClick={() => addGroup()}>Help!</button>
+      <button onClick={() => addGroup()}>add group</button>
       <ul>
         {groups?.map((group) => (
           <li key={group} onClick={() => deleteGroup(group)}>
