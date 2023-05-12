@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/store";
 import { setPointer } from "./canvasSlice";
 import style from "./Workspace.module.css";
 

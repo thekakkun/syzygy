@@ -4,7 +4,7 @@ import {
   useAddGroupMutation,
   useDeleteGroupMutation,
   useGetGroupsQuery,
-} from "../slvs/slvsGroupsSlice";
+} from "../../app/slvs/slvsGroupsSlice";
 
 export default function Objects() {
   const { data: groups, isLoading, isSuccess } = useGetGroupsQuery();

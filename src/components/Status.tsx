@@ -1,5 +1,5 @@
+import { useAppSelector } from "../app/store";
 import style from "./Status.module.css";
-import { useAppSelector } from "../app/hooks";
 
 export default function Status() {
   const [x, y] = useAppSelector((state) => state.canvas.pointer);

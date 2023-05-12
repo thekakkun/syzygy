@@ -1,4 +1,4 @@
-import { Coords, Handle } from "../types";
+import { Coords, Handle } from "../../features/types";
 
 type Entity = Point | Line;
 type EntityData = LineData | PointData;
