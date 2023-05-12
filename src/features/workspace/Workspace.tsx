@@ -12,9 +12,7 @@ export default function Workspace() {
         width={500}
         height={500}
         onMouseMove={(e) =>
-          dispatch(
-            setPointer({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
-          )
+          dispatch(setPointer([e.nativeEvent.offsetX, e.nativeEvent.offsetY]))
         }
       ></svg>
     </div>

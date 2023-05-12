@@ -6,7 +6,7 @@ interface CanvasState {
 }
 
 const initialState: CanvasState = {
-  pointer: { x: 0, y: 0 },
+  pointer: [0, 0],
 };
 
 export const canvasSlice = createSlice({

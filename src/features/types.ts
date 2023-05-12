@@ -3,10 +3,12 @@ export interface SliceState {
   error: string | null;
 }
 
-export interface Coords {
-  x: number;
-  y: number;
-}
+export type Coords = [number, number];
+
+// export interface Coords {
+//   x: number;
+//   y: number;
+// }
 
 export interface Handle {
   handle: number;
