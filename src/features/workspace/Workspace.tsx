@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../app/store";
-import { setPointer } from "./canvasSlice";
+import { setPointer } from "./workspaceSlice";
 import style from "./Workspace.module.css";
 
 export default function Workspace() {

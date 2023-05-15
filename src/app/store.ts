@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import canvasReducer from "../features/workspace/canvasSlice";
+import workspaceReducer from "../features/workspace/workspaceSlice";
 import { slvsSlice } from "./slvs/slvsSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
   reducer: {
-    canvas: canvasReducer,
+    workspace: workspaceReducer,
     [slvsSlice.reducerPath]: slvsSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
