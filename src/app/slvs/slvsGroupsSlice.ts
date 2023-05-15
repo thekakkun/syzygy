@@ -5,9 +5,9 @@ export const slvsGroupsSlice = slvsSlice.injectEndpoints({
   endpoints: (builder) => ({
     getGroups: builder.query<number[], void>({
       queryFn: async () => {
-        let group_list: number[] = await invoke("get_groups");
-        console.log(`Got groups: ${group_list}`);
-        return { data: group_list };
+        let groups: number[] = await invoke("get_groups");
+        console.log(`Got groups: ${groups}`);
+        return { data: groups };
       },
       providesTags: ["Group"],
     }),
