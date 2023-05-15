@@ -21,13 +21,13 @@ export default function Objects() {
       <button onClick={() => addGroup()}>add group</button>
       <ul>
         {groups?.map((group) => (
-          <li key={group} onClick={() => deleteGroup(group)}>
+          <li key={`group_${group}`} onClick={() => deleteGroup(group)}>
             {group}
             <ul>
               {entities
                 ?.filter((entity) => entity.data.group === group)
                 .map((entity) => (
-                  <li>{entity.type}</li>
+                  <li key={`entity_${entity.handle.handle}`}>{entity.type}</li>
                 ))}
             </ul>
           </li>

@@ -34,10 +34,10 @@ fn main() {
             // These points are represented by their coordinates (u v) within the
             // workplane, so they need only two parameters each.
             let p1 = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 10.0, 20.0))
+                .sketch(Point::<OnWorkplane>::new(g2, canvas, 20.0, 40.0))
                 .expect("point in 2d created");
             let p2 = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 20.0, 10.0))
+                .sketch(Point::<OnWorkplane>::new(g2, canvas, 40.0, 20.0))
                 .expect("point in 2d created");
             // And we create a line segment with those endpoints.
             let line = sys
@@ -46,13 +46,13 @@ fn main() {
 
             // Now three more points.
             let arc_center = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 100.0, 120.0))
+                .sketch(Point::<OnWorkplane>::new(g2, canvas, 200.0, 240.0))
                 .expect("point in 2d created");
             let arc_start = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 120.0, 110.0))
+                .sketch(Point::<OnWorkplane>::new(g2, canvas, 240.0, 220.0))
                 .expect("point in 2d created");
             let arc_finish = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 115.0, 115.0))
+                .sketch(Point::<OnWorkplane>::new(g2, canvas, 230.0, 230.0))
                 .expect("point in 2d created");
             // And arc, centered at point arc_center, starting at point arc_start, ending at
             // point arc_finish.
@@ -64,10 +64,10 @@ fn main() {
 
             // Now one more point, and a distance
             let circle_center = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 200.0, 200.0))
+                .sketch(Point::<OnWorkplane>::new(g2, canvas, 400.0, 400.0))
                 .expect("point in 2d created");
             let circle_radius = sys
-                .sketch(Distance::<OnWorkplane>::new(g2, canvas, 30.0))
+                .sketch(Distance::<OnWorkplane>::new(g2, canvas, 60.0))
                 .expect("distance created");
             // And a complete circle, centered at point circle_center with radius equal to
             // distance circle_radius. The normal is the same as our workplane.

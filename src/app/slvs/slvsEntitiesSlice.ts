@@ -19,7 +19,7 @@ interface Arc extends BaseEntity {
   type: "Arc";
   data: ArcData;
 }
-interface ArcData extends BaseData {
+export interface ArcData extends BaseData {
   center: Coords;
   begin: Coords;
   end: Coords;
@@ -29,7 +29,7 @@ interface Circle extends BaseEntity {
   type: "Circle";
   data: CircleData;
 }
-interface CircleData extends BaseData {
+export interface CircleData extends BaseData {
   center: Coords;
   radius: number;
 }
@@ -38,7 +38,7 @@ interface Cubic extends BaseEntity {
   type: "Cubic";
   data: CubicData;
 }
-interface CubicData extends BaseData {
+export interface CubicData extends BaseData {
   start_point: Coords;
   start_control: Coords;
   end_control: Coords;
@@ -49,7 +49,7 @@ interface Point extends BaseEntity {
   type: "Point";
   data: PointData;
 }
-interface PointData extends BaseData {
+export interface PointData extends BaseData {
   coords: Coords;
 }
 
@@ -57,7 +57,7 @@ interface Line extends BaseEntity {
   type: "Line";
   data: LineData;
 }
-interface LineData extends BaseData {
+export interface LineData extends BaseData {
   point_a: Coords;
   point_b: Coords;
 }
