@@ -1,4 +1,5 @@
 import { useAddGroupMutation } from "../../app/slvs/slvsGroupsSlice";
+import { useSolveMutation } from "../../app/slvs/slvsSlice";
 import { useAppDispatch, useAppSelector } from "../../app/store";
 import { addTempEntity } from "../objects/selectionSlice";
 
@@ -8,6 +9,7 @@ export default function Toolbar() {
   const dispatch = useAppDispatch();
   const active_group = useAppSelector((state) => state.selection.group);
   const [addGroup] = useAddGroupMutation();
+  const [solve] = useSolveMutation();
 
   return (
     <div className={style.tools}>
@@ -66,6 +68,17 @@ export default function Toolbar() {
           </ul>
         </li>
         <li>Constrain</li>
+        <li>
+          <button
+            onClick={() => {
+              if (active_group) {
+                solve(active_group);
+              }
+            }}
+          >
+            Solve
+          </button>
+        </li>
       </ul>
     </div>
   );

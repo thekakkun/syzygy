@@ -7,15 +7,24 @@ mod groups;
 
 use slvs::{
     entity::{EntityHandle, Normal, Point, Workplane},
+    group::Group,
     make_quaternion,
+    solver::SolveOkay,
     target::In3d,
     System,
 };
 use std::sync::Mutex;
-use tauri::Manager;
+use tauri::{Manager, State};
 
 pub struct Drawing(Mutex<System>);
 pub struct Canvas(EntityHandle<Workplane>);
+
+#[tauri::command]
+fn solve(group: Group, sys_state: State<Drawing>) -> Result<SolveOkay, &'static str> {
+    let mut sys = sys_state.0.lock().unwrap();
+    let result = sys.solve(&group);
+    result.map_err(|_| "unable to solve")
+}
 
 fn main() {
     tauri::Builder::default()
@@ -35,6 +44,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            solve,
             groups::get_groups,
             groups::add_group,
             groups::delete_group,
