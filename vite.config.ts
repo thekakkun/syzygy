@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import postcssNesting from "postcss-nesting";
 
 const mobile =
   process.env.TAURI_PLATFORM === "android" ||
@@ -9,12 +8,6 @@ const mobile =
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   plugins: [react()],
-
-  css: {
-    postcss: {
-      plugins: [postcssNesting],
-    },
-  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
