@@ -37,11 +37,8 @@ export function cubicHandles(start: Coords, end: Coords) {
   let [startX, startY] = start;
   let [endX, endY] = end;
 
-  let startControl: [number, number] = [
-    (startX + endX) / 3,
-    (startY + endY) / 3,
-  ];
-  let endControl: [number, number] = [
+  let startControl: Coords = [(startX + endX) / 3, (startY + endY) / 3];
+  let endControl: Coords = [
     ((startX + endX) * 2) / 3,
     ((startY + endY) * 2) / 3,
   ];

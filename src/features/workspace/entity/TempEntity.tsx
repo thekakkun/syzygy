@@ -16,6 +16,7 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
         <>
           <Arc
             data={{ center: points[0], start: points[1], end: points[2] }}
+            temp={true}
           ></Arc>
           <Point data={{ coords: points[0] }} temp={true}></Point>
           <Point data={{ coords: points[1] }} temp={true}></Point>
@@ -34,6 +35,7 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
               center: points[0],
               radius: Math.hypot(centerX - pointX, centerY - pointY),
             }}
+            temp={true}
           ></Circle>
           <Point data={{ coords: points[0] }} temp={true}></Point>
           <Point data={{ coords: points[1] }} temp={true}></Point>
@@ -54,6 +56,7 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
             end_control: endControl,
             end_point: endPoint,
           }}
+          temp={true}
         ></Cubic>
       );
 
