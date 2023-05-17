@@ -2,7 +2,9 @@ use crate::{Canvas, Drawing};
 
 use serde::{Deserialize, Serialize};
 use slvs::{
-    entity::{ArcOfCircle, Circle, Cubic, EntityHandle, LineSegment, Point, SomeEntityHandle},
+    entity::{
+        ArcOfCircle, Circle, Cubic, Distance, EntityHandle, LineSegment, Point, SomeEntityHandle,
+    },
     group::Group,
     target::OnWorkplane,
 };
@@ -50,6 +52,33 @@ pub struct SyzygyCircle {
     group: Group,
     center: OnWorkplane,
     radius: f64,
+}
+
+#[tauri::command]
+pub fn add_circle(
+    data: SyzygyCircle,
+    sys_state: State<Drawing>,
+    canvas_state: State<Canvas>,
+) -> Result<EntityHandle<Circle<OnWorkplane>>, &'static str> {
+    let mut sys = sys_state.0.lock().unwrap();
+    let canvas = canvas_state.0;
+
+    let OnWorkplane(center_u, center_v) = data.center;
+    let center = sys.sketch(Point::<OnWorkplane>::new(
+        data.group, canvas, center_u, center_v,
+    ))?;
+
+    let radius = sys.sketch(Distance::<OnWorkplane>::new(
+        data.group,
+        canvas,
+        data.radius,
+    ))?;
+
+    let normal = sys.entity_data(&canvas)?.normal;
+
+    sys.sketch(Circle::<OnWorkplane>::new(
+        data.group, canvas, center, radius, normal,
+    ))
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]

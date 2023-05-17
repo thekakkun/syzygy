@@ -40,6 +40,7 @@ fn main() {
             groups::delete_group,
             entities::get_entities,
             entities::add_arc,
+            entities::add_circle,
             entities::add_line,
             entities::add_point
         ])

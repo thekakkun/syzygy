@@ -90,6 +90,19 @@ export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
               });
               break;
 
+            case "Circle":
+              let [centerX, centerY] = data.coords[0] as Coords;
+              let [pointX, pointY] = data.coords[1] as Coords;
+
+              newEntityHandle = await invoke("add_circle", {
+                data: {
+                  group: data.group,
+                  center: data.coords[0],
+                  radius: Math.hypot(centerX - pointX, centerY - pointY),
+                },
+              });
+              break;
+
             case "Line":
               newEntityHandle = await invoke("add_line", {
                 data: {

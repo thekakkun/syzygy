@@ -1,5 +1,6 @@
 import { useAppSelector } from "../../../app/store";
 import { TempEntity } from "../../objects/selectionSlice";
+import { Coords } from "../../types";
 import Arc from "./Arc";
 import Circle from "./Circle";
 import Cubic from "./Cubic";
@@ -23,8 +24,22 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
         </>
       );
 
-    // case "Circle":
-    //   return <Circle data={entity.data}></Circle>;
+    case "Circle":
+      let [centerX, centerY] = points[0];
+      let [pointX, pointY] = points[1];
+
+      return (
+        <>
+          <Circle
+            data={{
+              center: points[0],
+              radius: Math.hypot(centerX - pointX, centerY - pointY),
+            }}
+          ></Circle>
+          <Point data={{ coords: points[0] }} temp={true}></Point>
+          <Point data={{ coords: points[1] }} temp={true}></Point>
+        </>
+      );
 
     // case "Cubic":
     //   return <Cubic data={entity.data}></Cubic>;

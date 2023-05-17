@@ -3,13 +3,17 @@ import { EntityName } from "../../app/slvs/slvsEntitiesSlice";
 import { Coords } from "../types";
 import { slvsGroupsSlice } from "../../app/slvs/slvsGroupsSlice";
 
-export type TempEntity = TempArc | TempLine | TempPoint;
+export type TempEntity = TempArc | TempCircle | TempLine | TempPoint;
 interface BaseTempEntity {
   type: EntityName;
 }
 interface TempArc extends BaseTempEntity {
   type: "Arc";
   coords: [Coords?, Coords?, Coords?];
+}
+interface TempCircle extends BaseTempEntity {
+  type: "Circle";
+  coords: [Coords?, Coords?];
 }
 interface TempLine extends BaseTempEntity {
   type: "Line";
@@ -42,6 +46,10 @@ export const selectionSlice = createSlice({
           };
           break;
         case "Circle":
+          state.selected = {
+            type: "Circle",
+            coords: [undefined, undefined],
+          };
           break;
         case "Cubic":
           break;
@@ -67,8 +75,9 @@ export const selectionSlice = createSlice({
             case "Arc":
               state.selected.coords[undefinedIx] = action.payload;
               break;
-            // case "Circle":
-            //   break;
+            case "Circle":
+              state.selected.coords[undefinedIx] = action.payload;
+              break;
             // case "Cubic":
             //   break;
             case "Line":

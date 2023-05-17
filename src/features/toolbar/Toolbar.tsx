@@ -33,6 +33,18 @@ export default function Toolbar() {
                   if (!active_group) {
                     addGroup();
                   }
+                  dispatch(addTempEntity("Circle"));
+                }}
+              >
+                Circle
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  if (!active_group) {
+                    addGroup();
+                  }
                   dispatch(addTempEntity("Line"));
                 }}
               >
