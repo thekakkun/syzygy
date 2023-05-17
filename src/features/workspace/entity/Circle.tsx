@@ -8,14 +8,14 @@ export default function Circle({
   temp?: boolean;
 }) {
   let {
-    center: [center_x, center_y],
+    center: [centerX, centerY],
     radius,
   } = data;
 
   return (
     <circle
-      cx={center_x}
-      cy={center_y}
+      cx={centerX}
+      cy={centerY}
       r={radius}
       stroke={temp ? "grey" : "black"}
       strokeWidth={2}

@@ -22,7 +22,7 @@ interface Arc extends BaseEntity {
 }
 export interface ArcData {
   center: Coords;
-  begin: Coords;
+  start: Coords;
   end: Coords;
 }
 
@@ -40,10 +40,10 @@ interface Cubic extends BaseEntity {
   data: CubicData & BaseEntityData;
 }
 export interface CubicData {
-  start_point: Coords;
-  start_control: Coords;
-  end_control: Coords;
-  end_point: Coords;
+  startPoint: Coords;
+  startControl: Coords;
+  endControl: Coords;
+  endPoint: Coords;
 }
 
 interface Point extends BaseEntity {
@@ -59,8 +59,8 @@ interface Line extends BaseEntity {
   data: LineData & BaseEntityData;
 }
 export interface LineData {
-  point_a: Coords;
-  point_b: Coords;
+  pointA: Coords;
+  pointB: Coords;
 }
 
 export const slvsEntitiesSlice = slvsSlice.injectEndpoints({

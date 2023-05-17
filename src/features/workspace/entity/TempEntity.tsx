@@ -24,7 +24,7 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
       return (
         <>
           <Line
-            data={{ point_a: points[0], point_b: points[1] }}
+            data={{ pointA: points[0], pointB: points[1] }}
             temp={true}
           ></Line>
           <Point data={{ coords: points[0] }} temp={true}></Point>

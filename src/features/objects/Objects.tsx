@@ -2,11 +2,8 @@ import style from "./Objects.module.css";
 
 import {
   useAddGroupMutation,
-  useDeleteGroupMutation,
   useGetGroupsQuery,
 } from "../../app/slvs/slvsGroupsSlice";
-import { useGetEntitiesQuery } from "../../app/slvs/slvsEntitiesSlice";
-import { useAppSelector } from "../../app/store";
 import Group from "./Group";
 
 export default function Objects() {

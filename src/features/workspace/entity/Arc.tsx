@@ -8,17 +8,17 @@ export default function Arc({
   temp?: boolean;
 }) {
   let {
-    center: [center_x, center_y],
-    begin: [begin_x, begin_y],
-    end: [end_x, end_y],
+    center: [centerX, centerY],
+    start: [startX, startY],
+    end: [endX, endY],
   } = data;
-  let radius = Math.hypot(center_x - begin_x, center_y - begin_y);
+  let radius = Math.hypot(centerX - startX, centerY - startY);
 
   return (
     <path
       d={`
-        M ${begin_x} ${begin_y}
-        A ${radius} ${radius} 0 0 1 ${end_x} ${end_y}
+        M ${startX} ${startY}
+        A ${radius} ${radius} 0 0 1 ${endX} ${endY}
       `}
       stroke={temp ? "grey" : "black"}
       strokeWidth={2}

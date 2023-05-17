@@ -16,16 +16,16 @@ export default function Workspace() {
   const [addEntity] = useAddEntityMutation();
 
   const { selected } = useAppSelector((state) => state.selection);
-  const active_group = useAppSelector((state) => state.selection.group);
+  const activeGroup = useAppSelector((state) => state.selection.group);
 
   useEffect(() => {
     const tempEntityReady =
       "type" in selected && selected.coords.every(Boolean);
-    if (tempEntityReady && active_group) {
-      addEntity({ group: active_group, ...selected });
+    if (tempEntityReady && activeGroup) {
+      addEntity({ group: activeGroup, ...selected });
       dispatch(clearSelection());
     }
-  }, [selected, active_group]);
+  }, [selected, activeGroup]);
 
   return (
     <div className={style.workspace}>

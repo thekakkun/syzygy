@@ -6,7 +6,6 @@ export const slvsGroupsSlice = slvsSlice.injectEndpoints({
     getGroups: builder.query<number[], void>({
       queryFn: async () => {
         let groups: number[] = await invoke("get_groups");
-        console.log(`Got groups: ${groups}`);
         return { data: groups };
       },
       providesTags: ["Group"],
@@ -14,7 +13,6 @@ export const slvsGroupsSlice = slvsSlice.injectEndpoints({
     addGroup: builder.mutation<number, void>({
       queryFn: async () => {
         let group: number = await invoke("add_group");
-        console.log(`added group: ${group}`);
         return { data: group };
       },
       invalidatesTags: ["Group"],
@@ -22,9 +20,9 @@ export const slvsGroupsSlice = slvsSlice.injectEndpoints({
     deleteGroup: builder.mutation<number, number>({
       queryFn: async (group) => {
         try {
-          let deleted_group: number = await invoke("delete_group", { group });
-          console.log(`deleted group: ${deleted_group}`);
-          return { data: deleted_group };
+          let deletedGroup: number = await invoke("delete_group", { group });
+          console.log(`deleted group: ${deletedGroup}`);
+          return { data: deletedGroup };
         } catch (err) {
           console.log(`error deleting group: ${err}`);
           return { error: err as string };

@@ -53,8 +53,8 @@ export const selectionSlice = createSlice({
     },
     updateTempEntity: (state, action: PayloadAction<Coords>) => {
       if ("type" in state.selected) {
-        let undefined_ix = state.selected.coords.indexOf(undefined);
-        if (undefined_ix !== -1) {
+        let undefinedIx = state.selected.coords.indexOf(undefined);
+        if (undefinedIx !== -1) {
           switch (state.selected.type) {
             // case "Arc":
             //   break;
@@ -63,10 +63,10 @@ export const selectionSlice = createSlice({
             // case "Cubic":
             //   break;
             case "Line":
-              state.selected.coords[undefined_ix] = action.payload;
+              state.selected.coords[undefinedIx] = action.payload;
 
             case "Point":
-              state.selected.coords[undefined_ix] = action.payload;
+              state.selected.coords[undefinedIx] = action.payload;
           }
         }
       }
@@ -85,9 +85,9 @@ export const selectionSlice = createSlice({
               state.group = action.payload[0];
             }
           } else if (action.payload.length !== 0) {
-            let current_group = state.group;
+            let currentGroup = state.group;
             state.group = action.payload.reduce((acc, curr) => {
-              if (acc < curr && curr <= current_group) {
+              if (acc < curr && curr <= currentGroup) {
                 return curr;
               } else {
                 return acc;
