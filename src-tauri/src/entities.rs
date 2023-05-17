@@ -10,6 +10,70 @@ use slvs::{
 };
 use tauri::State;
 
+#[tauri::command]
+pub fn get_entities(sys_state: State<Drawing>) -> Vec<SyzygyEntity> {
+    let sys = sys_state.0.lock().unwrap();
+    let handles = sys.entity_handles();
+
+    handles
+        .iter()
+        .filter_map(|handle| match handle {
+            SomeEntityHandle::ArcOfCircle(handle) => {
+                let data = sys.entity_data(handle).unwrap();
+                Some(SyzygyEntity::Arc {
+                    handle: *handle,
+                    data: SyzygyArc {
+                        group: data.group,
+                        center: sys.entity_data(&data.center).unwrap().coords,
+                        start: sys.entity_data(&data.arc_begin).unwrap().coords,
+                        end: sys.entity_data(&data.arc_end).unwrap().coords,
+                    },
+                })
+            }
+            SomeEntityHandle::CircleOnWorkplane(handle) => {
+                let data = sys.entity_data(handle).unwrap();
+                Some(SyzygyEntity::Circle {
+                    handle: *handle,
+                    data: SyzygyCircle {
+                        group: data.group,
+                        center: sys.entity_data(&data.center).unwrap().coords,
+                        radius: sys.entity_data(&data.radius).unwrap().val,
+                    },
+                })
+            }
+            SomeEntityHandle::CubicOnWorkplane(handle) => {
+                let data = sys.entity_data(handle).unwrap();
+                Some(SyzygyEntity::Cubic {
+                    handle: *handle,
+                    data: SyzygyCubic {
+                        group: data.group,
+                        start_point: sys.entity_data(&data.start_point).unwrap().coords,
+                        start_control: sys.entity_data(&data.start_control).unwrap().coords,
+                        end_control: sys.entity_data(&data.end_control).unwrap().coords,
+                        end_point: sys.entity_data(&data.end_point).unwrap().coords,
+                    },
+                })
+            }
+            SomeEntityHandle::LineSegmentOnWorkplane(handle) => {
+                let data = sys.entity_data(handle).unwrap();
+                Some(SyzygyEntity::Line {
+                    handle: *handle,
+                    data: SyzygyLine {
+                        group: data.group,
+                        point_a: sys.entity_data(&data.point_a).unwrap().coords,
+                        point_b: sys.entity_data(&data.point_b).unwrap().coords,
+                    },
+                })
+            }
+            SomeEntityHandle::PointOnWorkplane(handle) => Some(SyzygyEntity::Point {
+                handle: *handle,
+                data: sys.entity_data(handle).unwrap().into(),
+            }),
+            _ => None,
+        })
+        .collect()
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct SyzygyArc {
     group: Group,
@@ -218,68 +282,4 @@ pub enum SyzygyEntity {
         handle: EntityHandle<Point<OnWorkplane>>,
         data: SyzygyPoint,
     },
-}
-
-#[tauri::command]
-pub fn get_entities(sys_state: State<Drawing>) -> Vec<SyzygyEntity> {
-    let sys = sys_state.0.lock().unwrap();
-    let handles = sys.entity_handles();
-
-    handles
-        .iter()
-        .filter_map(|handle| match handle {
-            SomeEntityHandle::ArcOfCircle(handle) => {
-                let data = sys.entity_data(handle).unwrap();
-                Some(SyzygyEntity::Arc {
-                    handle: *handle,
-                    data: SyzygyArc {
-                        group: data.group,
-                        center: sys.entity_data(&data.center).unwrap().coords,
-                        start: sys.entity_data(&data.arc_begin).unwrap().coords,
-                        end: sys.entity_data(&data.arc_end).unwrap().coords,
-                    },
-                })
-            }
-            SomeEntityHandle::CircleOnWorkplane(handle) => {
-                let data = sys.entity_data(handle).unwrap();
-                Some(SyzygyEntity::Circle {
-                    handle: *handle,
-                    data: SyzygyCircle {
-                        group: data.group,
-                        center: sys.entity_data(&data.center).unwrap().coords,
-                        radius: sys.entity_data(&data.radius).unwrap().val,
-                    },
-                })
-            }
-            SomeEntityHandle::CubicOnWorkplane(handle) => {
-                let data = sys.entity_data(handle).unwrap();
-                Some(SyzygyEntity::Cubic {
-                    handle: *handle,
-                    data: SyzygyCubic {
-                        group: data.group,
-                        start_point: sys.entity_data(&data.start_point).unwrap().coords,
-                        start_control: sys.entity_data(&data.start_control).unwrap().coords,
-                        end_control: sys.entity_data(&data.end_control).unwrap().coords,
-                        end_point: sys.entity_data(&data.end_point).unwrap().coords,
-                    },
-                })
-            }
-            SomeEntityHandle::LineSegmentOnWorkplane(handle) => {
-                let data = sys.entity_data(handle).unwrap();
-                Some(SyzygyEntity::Line {
-                    handle: *handle,
-                    data: SyzygyLine {
-                        group: data.group,
-                        point_a: sys.entity_data(&data.point_a).unwrap().coords,
-                        point_b: sys.entity_data(&data.point_b).unwrap().coords,
-                    },
-                })
-            }
-            SomeEntityHandle::PointOnWorkplane(handle) => Some(SyzygyEntity::Point {
-                handle: *handle,
-                data: sys.entity_data(handle).unwrap().into(),
-            }),
-            _ => None,
-        })
-        .collect()
 }
