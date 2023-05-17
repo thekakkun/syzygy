@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import workspaceReducer from "../features/workspace/workspaceSlice";
+import cursorReducer from "../features/cursor/cursorSlice";
 import { slvsSlice } from "./slvs/slvsSlice";
+import selectionReducer from "../features/objects/selectionSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
   reducer: {
-    workspace: workspaceReducer,
+    cursor: cursorReducer,
+    selection: selectionReducer,
     [slvsSlice.reducerPath]: slvsSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

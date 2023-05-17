@@ -1,0 +1,12 @@
+.group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.active {
+  color: white;
+}
+
+.delete {
+}

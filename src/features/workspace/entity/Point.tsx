@@ -1,6 +1,12 @@
 import { PointData } from "../../../app/slvs/slvsEntitiesSlice";
 
-export default function Point({ data }: { data: PointData }) {
+export default function Point({
+  data,
+  temp = false,
+}: {
+  data: PointData;
+  temp?: boolean;
+}) {
   const point_size = 5;
   let [x, y] = data.coords;
   return (
@@ -12,7 +18,9 @@ export default function Point({ data }: { data: PointData }) {
         h ${-point_size}
         Z
       `}
-      fill="blue"
+      fill="white"
+      stroke={temp ? "lightblue" : "blue"}
+      strokeWidth={1}
     ></path>
   );
 }

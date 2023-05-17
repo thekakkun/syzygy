@@ -33,6 +33,33 @@ pub struct SyzygyCubic {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct SyzygyLine {
+    group: Group,
+    point_a: OnWorkplane,
+    point_b: OnWorkplane,
+}
+
+#[tauri::command]
+pub fn add_line(
+    data: SyzygyLine,
+    sys_state: State<Drawing>,
+    canvas_state: State<Canvas>,
+) -> Result<EntityHandle<LineSegment<OnWorkplane>>, &'static str> {
+    let mut sys = sys_state.0.lock().unwrap();
+    let canvas = canvas_state.0;
+
+    let OnWorkplane(a_u, a_v) = data.point_a;
+    let point_a = sys.sketch(Point::<OnWorkplane>::new(data.group, canvas, a_u, a_v))?;
+
+    let OnWorkplane(b_u, b_v) = data.point_b;
+    let point_b = sys.sketch(Point::<OnWorkplane>::new(data.group, canvas, b_u, b_v))?;
+
+    sys.sketch(LineSegment::<OnWorkplane>::new(
+        data.group, canvas, point_a, point_b,
+    ))
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct SyzygyPoint {
     group: Group,
     coords: OnWorkplane,
@@ -47,11 +74,17 @@ impl From<Point<OnWorkplane>> for SyzygyPoint {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct SyzygyLine {
-    group: Group,
-    point_a: OnWorkplane,
-    point_b: OnWorkplane,
+#[tauri::command]
+pub fn add_point(
+    data: SyzygyPoint,
+    sys_state: State<Drawing>,
+    canvas_state: State<Canvas>,
+) -> Result<EntityHandle<Point<OnWorkplane>>, &'static str> {
+    let mut sys = sys_state.0.lock().unwrap();
+    let canvas = canvas_state.0;
+
+    let OnWorkplane(u, v) = data.coords;
+    sys.sketch(Point::<OnWorkplane>::new(data.group, canvas, u, v))
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
@@ -141,17 +174,4 @@ pub fn get_entities(sys_state: State<Drawing>) -> Vec<SyzygyEntity> {
             _ => None,
         })
         .collect()
-}
-
-#[tauri::command]
-pub fn add_point(
-    data: SyzygyPoint,
-    sys_state: State<Drawing>,
-    canvas_state: State<Canvas>,
-) -> Result<EntityHandle<Point<OnWorkplane>>, &'static str> {
-    let mut sys = sys_state.0.lock().unwrap();
-    let canvas = canvas_state.0;
-
-    let OnWorkplane(u, v) = data.coords;
-    sys.sketch(Point::<OnWorkplane>::new(data.group, canvas, u, v))
 }

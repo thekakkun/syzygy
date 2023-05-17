@@ -1,6 +1,12 @@
 import { ArcData } from "../../../app/slvs/slvsEntitiesSlice";
 
-export default function Arc({ data }: { data: ArcData }) {
+export default function Arc({
+  data,
+  temp = false,
+}: {
+  data: ArcData;
+  temp?: boolean;
+}) {
   let {
     center: [center_x, center_y],
     begin: [begin_x, begin_y],
@@ -12,10 +18,11 @@ export default function Arc({ data }: { data: ArcData }) {
     <path
       d={`
         M ${begin_x} ${begin_y}
-        A ${radius} ${radius} 0 0 0 ${end_x} ${end_y}
+        A ${radius} ${radius} 0 0 1 ${end_x} ${end_y}
       `}
-      stroke="red"
+      stroke={temp ? "grey" : "black"}
       strokeWidth={2}
+      fillOpacity={0}
     ></path>
   );
 }

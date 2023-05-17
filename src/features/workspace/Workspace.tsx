@@ -1,16 +1,31 @@
-import { useGetEntitiesQuery } from "../../app/slvs/slvsEntitiesSlice";
-import { useAppDispatch } from "../../app/store";
+import { useEffect } from "react";
+import {
+  useAddEntityMutation,
+  useGetEntitiesQuery,
+} from "../../app/slvs/slvsEntitiesSlice";
+import { useAppDispatch, useAppSelector } from "../../app/store";
+import { setCoord } from "../cursor/cursorSlice";
+import { clearSelection, updateTempEntity } from "../objects/selectionSlice";
 import style from "./Workspace.module.css";
-import Arc from "./entity/Arc";
-import Circle from "./entity/Circle";
-import Cubic from "./entity/Cubic";
-import Line from "./entity/Line";
-import Point from "./entity/Point";
-import { setPointer } from "./workspaceSlice";
+import EntityPath from "./entity/Entity";
+import TempEntityPath from "./entity/TempEntity";
 
 export default function Workspace() {
   const dispatch = useAppDispatch();
   const { data: entities } = useGetEntitiesQuery();
+  const [addEntity] = useAddEntityMutation();
+
+  const { selected } = useAppSelector((state) => state.selection);
+  const active_group = useAppSelector((state) => state.selection.group);
+
+  useEffect(() => {
+    const tempEntityReady =
+      "type" in selected && selected.coords.every(Boolean);
+    if (tempEntityReady && active_group) {
+      addEntity({ group: active_group, ...selected });
+      dispatch(clearSelection());
+    }
+  }, [selected, active_group]);
 
   return (
     <div className={style.workspace}>
@@ -19,52 +34,26 @@ export default function Workspace() {
         width={500}
         height={500}
         onMouseMove={(e) =>
-          dispatch(setPointer([e.nativeEvent.offsetX, e.nativeEvent.offsetY]))
+          dispatch(setCoord([e.nativeEvent.offsetX, e.nativeEvent.offsetY]))
         }
-      >
-        {entities?.map((entity) => {
-          switch (entity.type) {
-            case "Arc":
-              return (
-                <Arc
-                  key={`entity_${entity.handle.handle}`}
-                  data={entity.data}
-                ></Arc>
-              );
-
-            case "Circle":
-              return (
-                <Circle
-                  key={`entity_${entity.handle.handle}`}
-                  data={entity.data}
-                ></Circle>
-              );
-
-            case "Cubic":
-              return (
-                <Cubic
-                  key={`entity_${entity.handle.handle}`}
-                  data={entity.data}
-                ></Cubic>
-              );
-
-            case "Line":
-              return (
-                <Line
-                  key={`entity_${entity.handle.handle}`}
-                  data={entity.data}
-                ></Line>
-              );
-
-            case "Point":
-              return (
-                <Point
-                  key={`entity_${entity.handle.handle}`}
-                  data={entity.data}
-                ></Point>
-              );
+        onClick={(e) => {
+          if ("type" in selected) {
+            dispatch(
+              updateTempEntity([e.nativeEvent.offsetX, e.nativeEvent.offsetY])
+            );
           }
-        })}
+        }}
+      >
+        {entities?.map((entity) => (
+          <EntityPath
+            key={`entity_${entity.handle.handle}`}
+            entity={entity}
+          ></EntityPath>
+        ))}
+
+        {"type" in selected ? (
+          <TempEntityPath entity={selected}></TempEntityPath>
+        ) : null}
       </svg>
     </div>
   );

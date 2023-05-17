@@ -6,9 +6,9 @@ mod entities;
 mod groups;
 
 use slvs::{
-    entity::{ArcOfCircle, Circle, Distance, EntityHandle, LineSegment, Normal, Point, Workplane},
+    entity::{EntityHandle, Normal, Point, Workplane},
     make_quaternion,
-    target::{In3d, OnWorkplane},
+    target::{In3d},
     System,
 };
 use std::sync::Mutex;
@@ -28,58 +28,6 @@ fn main() {
                 make_quaternion([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]),
             ))?;
             let canvas = sys.sketch(Workplane::new(g, origin, normal))?;
-
-            let g2 = sys.add_group();
-
-            // These points are represented by their coordinates (u v) within the
-            // workplane, so they need only two parameters each.
-            let p1 = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 20.0, 40.0))
-                .expect("point in 2d created");
-            let p2 = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 40.0, 20.0))
-                .expect("point in 2d created");
-            // And we create a line segment with those endpoints.
-            let line = sys
-                .sketch(LineSegment::<OnWorkplane>::new(g2, canvas, p1, p2))
-                .expect("line segment created");
-
-            // Now three more points.
-            let arc_center = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 200.0, 240.0))
-                .expect("point in 2d created");
-            let arc_start = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 240.0, 220.0))
-                .expect("point in 2d created");
-            let arc_finish = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 230.0, 230.0))
-                .expect("point in 2d created");
-            // And arc, centered at point arc_center, starting at point arc_start, ending at
-            // point arc_finish.
-            let arc = sys
-                .sketch(ArcOfCircle::new(
-                    g2, canvas, arc_center, arc_start, arc_finish, normal,
-                ))
-                .expect("arc created");
-
-            // Now one more point, and a distance
-            let circle_center = sys
-                .sketch(Point::<OnWorkplane>::new(g2, canvas, 400.0, 400.0))
-                .expect("point in 2d created");
-            let circle_radius = sys
-                .sketch(Distance::<OnWorkplane>::new(g2, canvas, 60.0))
-                .expect("distance created");
-            // And a complete circle, centered at point circle_center with radius equal to
-            // distance circle_radius. The normal is the same as our workplane.
-            let circle = sys
-                .sketch(Circle::<OnWorkplane>::new(
-                    g2,
-                    canvas,
-                    circle_center,
-                    circle_radius,
-                    normal,
-                ))
-                .expect("circle created");
 
             app.manage(Drawing(Mutex::new(sys)));
             app.manage(Canvas(canvas));

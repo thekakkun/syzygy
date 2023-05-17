@@ -6,32 +6,21 @@ import {
   useGetGroupsQuery,
 } from "../../app/slvs/slvsGroupsSlice";
 import { useGetEntitiesQuery } from "../../app/slvs/slvsEntitiesSlice";
-import { useEffect } from "react";
+import { useAppSelector } from "../../app/store";
+import Group from "./Group";
 
 export default function Objects() {
   const { data: groups } = useGetGroupsQuery();
-  const { data: entities } = useGetEntitiesQuery();
-  const [addGroup] = useAddGroupMutation();
-  const [deleteGroup] = useDeleteGroupMutation();
 
-  useEffect(() => console.log(entities), []);
+  const [addGroup] = useAddGroupMutation();
 
   return (
     <div className={style.objects}>
       <button onClick={() => addGroup()}>add group</button>
       <ul>
-        {groups?.map((group) => (
-          <li key={`group_${group}`} onClick={() => deleteGroup(group)}>
-            {group}
-            <ul>
-              {entities
-                ?.filter((entity) => entity.data.group === group)
-                .map((entity) => (
-                  <li key={`entity_${entity.handle.handle}`}>{entity.type}</li>
-                ))}
-            </ul>
-          </li>
-        ))}
+        {groups?.map((group) => {
+          return <Group key={`group_${group}`} group={group}></Group>;
+        })}
       </ul>
     </div>
   );
