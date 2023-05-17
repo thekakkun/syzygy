@@ -8,8 +8,8 @@ export default function Line({
   temp?: boolean;
 }) {
   let {
-    pointA: [pointAX, pointAY],
-    pointB: [pointBX, pointBY],
+    point_a: [pointAX, pointAY],
+    point_b: [pointBX, pointBY],
   } = data;
 
   return (

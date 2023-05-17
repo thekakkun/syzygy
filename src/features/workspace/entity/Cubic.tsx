@@ -8,10 +8,10 @@ export default function Cubic({
   temp?: boolean;
 }) {
   let {
-    startPoint: [startX, startY],
-    startControl: [start_controlX, start_controlY],
-    endControl: [end_controlX, end_controlY],
-    endPoint: [endX, endY],
+    start_point: [startX, startY],
+    start_control: [start_controlX, start_controlY],
+    end_control: [end_controlX, end_controlY],
+    end_point: [endX, endY],
   } = data;
 
   return (

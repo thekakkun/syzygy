@@ -11,8 +11,17 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
   let points = entity.coords.map((coord) => (coord ? coord : cursor.coord));
 
   switch (entity.type) {
-    // case "Arc":
-    //   return <Arc data={entity.data}></Arc>;
+    case "Arc":
+      return (
+        <>
+          <Arc
+            data={{ center: points[0], start: points[1], end: points[2] }}
+          ></Arc>
+          <Point data={{ coords: points[0] }} temp={true}></Point>
+          <Point data={{ coords: points[1] }} temp={true}></Point>
+          <Point data={{ coords: points[2] }} temp={true}></Point>
+        </>
+      );
 
     // case "Circle":
     //   return <Circle data={entity.data}></Circle>;
@@ -24,7 +33,7 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
       return (
         <>
           <Line
-            data={{ pointA: points[0], pointB: points[1] }}
+            data={{ point_a: points[0], point_b: points[1] }}
             temp={true}
           ></Line>
           <Point data={{ coords: points[0] }} temp={true}></Point>

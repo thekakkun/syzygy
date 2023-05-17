@@ -12,8 +12,37 @@ use tauri::State;
 pub struct SyzygyArc {
     group: Group,
     center: OnWorkplane,
-    begin: OnWorkplane,
+    start: OnWorkplane,
     end: OnWorkplane,
+}
+
+#[tauri::command]
+pub fn add_arc(
+    data: SyzygyArc,
+    sys_state: State<Drawing>,
+    canvas_state: State<Canvas>,
+) -> Result<EntityHandle<ArcOfCircle>, &'static str> {
+    let mut sys = sys_state.0.lock().unwrap();
+    let canvas = canvas_state.0;
+
+    let OnWorkplane(center_u, center_v) = data.center;
+    let center = sys.sketch(Point::<OnWorkplane>::new(
+        data.group, canvas, center_u, center_v,
+    ))?;
+
+    let OnWorkplane(start_u, start_v) = data.start;
+    let start = sys.sketch(Point::<OnWorkplane>::new(
+        data.group, canvas, start_u, start_v,
+    ))?;
+
+    let OnWorkplane(end_u, end_v) = data.end;
+    let end = sys.sketch(Point::<OnWorkplane>::new(data.group, canvas, end_u, end_v))?;
+
+    let normal = sys.entity_data(&canvas)?.normal;
+
+    sys.sketch(ArcOfCircle::new(
+        data.group, canvas, center, start, end, normal,
+    ))
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
@@ -127,7 +156,7 @@ pub fn get_entities(sys_state: State<Drawing>) -> Vec<SyzygyEntity> {
                     data: SyzygyArc {
                         group: data.group,
                         center: sys.entity_data(&data.center).unwrap().coords,
-                        begin: sys.entity_data(&data.arc_begin).unwrap().coords,
+                        start: sys.entity_data(&data.arc_begin).unwrap().coords,
                         end: sys.entity_data(&data.arc_end).unwrap().coords,
                     },
                 })

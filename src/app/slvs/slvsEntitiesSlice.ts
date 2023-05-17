@@ -40,10 +40,10 @@ interface Cubic extends BaseEntity {
   data: CubicData & BaseEntityData;
 }
 export interface CubicData {
-  startPoint: Coords;
-  startControl: Coords;
-  endControl: Coords;
-  endPoint: Coords;
+  start_point: Coords;
+  start_control: Coords;
+  end_control: Coords;
+  end_point: Coords;
 }
 
 interface Point extends BaseEntity {
@@ -59,8 +59,8 @@ interface Line extends BaseEntity {
   data: LineData & BaseEntityData;
 }
 export interface LineData {
-  pointA: Coords;
-  pointB: Coords;
+  point_a: Coords;
+  point_b: Coords;
 }
 
 export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
@@ -68,6 +68,7 @@ export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
     getEntities: builder.query<Entity[], void>({
       queryFn: async () => {
         let entities: Entity[] = await invoke("get_entities");
+        console.log(entities);
         return { data: entities };
       },
       providesTags: ["Entity"],
@@ -75,19 +76,42 @@ export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
     addEntity: builder.mutation<Handle, BaseEntityData & TempEntity>({
       queryFn: async (data) => {
         try {
+          let newEntityHandle: Handle;
+
           switch (data.type) {
+            case "Arc":
+              newEntityHandle = await invoke("add_arc", {
+                data: {
+                  group: data.group,
+                  center: data.coords[0],
+                  start: data.coords[1],
+                  end: data.coords[2],
+                },
+              });
+              break;
+
+            case "Line":
+              newEntityHandle = await invoke("add_line", {
+                data: {
+                  group: data.group,
+                  point_a: data.coords[0],
+                  point_b: data.coords[1],
+                },
+              });
+              break;
+
             case "Point":
-              let newEntityHandle: Handle = await invoke("add_point", {
+              newEntityHandle = await invoke("add_point", {
                 data: {
                   group: data.group,
                   coords: data.coords[0],
                 },
               });
-              return { data: newEntityHandle };
-            default:
-              throw `Unknown entity type: ${data.type}`;
+              break;
           }
+          return { data: newEntityHandle };
         } catch (err) {
+          console.log(err);
           return { error: err as string };
         }
       },

@@ -8,7 +8,7 @@ mod groups;
 use slvs::{
     entity::{EntityHandle, Normal, Point, Workplane},
     make_quaternion,
-    target::{In3d},
+    target::In3d,
     System,
 };
 use std::sync::Mutex;
@@ -39,6 +39,8 @@ fn main() {
             groups::add_group,
             groups::delete_group,
             entities::get_entities,
+            entities::add_arc,
+            entities::add_line,
             entities::add_point
         ])
         .run(tauri::generate_context!())

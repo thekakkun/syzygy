@@ -8,7 +8,6 @@ import Group from "./Group";
 
 export default function Objects() {
   const { data: groups } = useGetGroupsQuery();
-
   const [addGroup] = useAddGroupMutation();
 
   return (
