@@ -1,6 +1,5 @@
 import { useAppSelector } from "../../../app/store";
-import { TempEntity } from "../../objects/selectionSlice";
-import { Coords } from "../../types";
+import { TempEntity, cubicHandles } from "../../objects/selectionSlice";
 import Arc from "./Arc";
 import Circle from "./Circle";
 import Cubic from "./Cubic";
@@ -41,8 +40,22 @@ export default function TempEntityPath({ entity }: { entity: TempEntity }) {
         </>
       );
 
-    // case "Cubic":
-    //   return <Cubic data={entity.data}></Cubic>;
+    case "Cubic":
+      let [startPoint, startControl, endControl, endPoint] = cubicHandles(
+        points[0],
+        points[1]
+      );
+
+      return (
+        <Cubic
+          data={{
+            start_point: startPoint,
+            start_control: startControl,
+            end_control: endControl,
+            end_point: endPoint,
+          }}
+        ></Cubic>
+      );
 
     case "Line":
       return (

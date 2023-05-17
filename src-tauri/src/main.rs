@@ -51,6 +51,7 @@ fn main() {
             entities::get_entities,
             entities::add_arc,
             entities::add_circle,
+            entities::add_cubic,
             entities::add_line,
             entities::add_point
         ])

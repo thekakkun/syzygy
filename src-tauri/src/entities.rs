@@ -90,6 +90,56 @@ pub struct SyzygyCubic {
     end_point: OnWorkplane,
 }
 
+#[tauri::command]
+pub fn add_cubic(
+    data: SyzygyCubic,
+    sys_state: State<Drawing>,
+    canvas_state: State<Canvas>,
+) -> Result<EntityHandle<Cubic<OnWorkplane>>, &'static str> {
+    let mut sys = sys_state.0.lock().unwrap();
+    let canvas = canvas_state.0;
+
+    let OnWorkplane(start_point_u, start_point_v) = data.start_point;
+    let start_point = sys.sketch(Point::<OnWorkplane>::new(
+        data.group,
+        canvas,
+        start_point_u,
+        start_point_v,
+    ))?;
+
+    let OnWorkplane(start_control_u, start_control_v) = data.start_control;
+    let start_control = sys.sketch(Point::<OnWorkplane>::new(
+        data.group,
+        canvas,
+        start_control_u,
+        start_control_v,
+    ))?;
+
+    let OnWorkplane(end_control_u, end_control_v) = data.end_control;
+    let end_control = sys.sketch(Point::<OnWorkplane>::new(
+        data.group,
+        canvas,
+        end_control_u,
+        end_control_v,
+    ))?;
+
+    let OnWorkplane(end_point_u, end_point_v) = data.end_point;
+    let end_point = sys.sketch(Point::<OnWorkplane>::new(
+        data.group,
+        canvas,
+        end_point_u,
+        end_point_v,
+    ))?;
+
+    sys.sketch(Cubic::<OnWorkplane>::new(
+        data.group,
+        canvas,
+        start_point,
+        start_control,
+        end_control,
+        end_point,
+    ))
+}
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct SyzygyLine {
     group: Group,

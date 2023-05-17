@@ -47,6 +47,18 @@ export default function Toolbar() {
                   if (!active_group) {
                     addGroup();
                   }
+                  dispatch(addTempEntity("Cubic"));
+                }}
+              >
+                Cubic
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  if (!active_group) {
+                    addGroup();
+                  }
                   dispatch(addTempEntity("Line"));
                 }}
               >

@@ -1,9 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { EntityName } from "../../app/slvs/slvsEntitiesSlice";
-import { Coords } from "../types";
 import { slvsGroupsSlice } from "../../app/slvs/slvsGroupsSlice";
+import { Coords } from "../types";
 
-export type TempEntity = TempArc | TempCircle | TempLine | TempPoint;
+export type TempEntity =
+  | TempArc
+  | TempCircle
+  | TempCubic
+  | TempLine
+  | TempPoint;
 interface BaseTempEntity {
   type: EntityName;
 }
@@ -15,6 +20,10 @@ interface TempCircle extends BaseTempEntity {
   type: "Circle";
   coords: [Coords?, Coords?];
 }
+interface TempCubic extends BaseTempEntity {
+  type: "Cubic";
+  coords: [Coords?, Coords?];
+}
 interface TempLine extends BaseTempEntity {
   type: "Line";
   coords: [Coords?, Coords?];
@@ -22,6 +31,22 @@ interface TempLine extends BaseTempEntity {
 interface TempPoint extends BaseTempEntity {
   type: "Point";
   coords: [Coords?];
+}
+
+export function cubicHandles(start: Coords, end: Coords) {
+  let [startX, startY] = start;
+  let [endX, endY] = end;
+
+  let startControl: [number, number] = [
+    (startX + endX) / 3,
+    (startY + endY) / 3,
+  ];
+  let endControl: [number, number] = [
+    ((startX + endX) * 2) / 3,
+    ((startY + endY) * 2) / 3,
+  ];
+
+  return [start, startControl, endControl, end];
 }
 
 interface SelectionState {
@@ -52,6 +77,10 @@ export const selectionSlice = createSlice({
           };
           break;
         case "Cubic":
+          state.selected = {
+            type: "Cubic",
+            coords: [undefined, undefined],
+          };
           break;
         case "Line":
           state.selected = {
@@ -71,22 +100,7 @@ export const selectionSlice = createSlice({
       if ("type" in state.selected) {
         let undefinedIx = state.selected.coords.indexOf(undefined);
         if (undefinedIx !== -1) {
-          switch (state.selected.type) {
-            case "Arc":
-              state.selected.coords[undefinedIx] = action.payload;
-              break;
-            case "Circle":
-              state.selected.coords[undefinedIx] = action.payload;
-              break;
-            // case "Cubic":
-            //   break;
-            case "Line":
-              state.selected.coords[undefinedIx] = action.payload;
-              break;
-            case "Point":
-              state.selected.coords[undefinedIx] = action.payload;
-              break;
-          }
+          state.selected.coords[undefinedIx] = action.payload;
         }
       }
     },

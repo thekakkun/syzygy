@@ -15,15 +15,36 @@ export default function Cubic({
   } = data;
 
   return (
-    <path
-      d={`
-        M ${startX} ${startY}
-        C ${start_controlX} ${start_controlY},
-        ${end_controlX} ${end_controlY},
-        ${endX} ${endY}
+    <g>
+      <path
+        d={`
+          M ${startX} ${startY}
+          C ${start_controlX} ${start_controlY},
+          ${end_controlX} ${end_controlY},
+          ${endX} ${endY}
       `}
-      stroke={temp ? "grey" : "black"}
-      strokeWidth={2}
-    ></path>
+        stroke={temp ? "grey" : "black"}
+        strokeWidth={2}
+        fillOpacity={0}
+      ></path>
+      <path
+        d={`
+          M ${startX} ${startY}
+          L ${start_controlX} ${start_controlY}
+      `}
+        stroke={temp ? "silver" : "grey"}
+        strokeWidth={1}
+        fillOpacity={0}
+      ></path>
+      <path
+        d={`
+          M ${endX} ${endY}
+          L ${end_controlX} ${end_controlY}
+      `}
+        stroke={temp ? "silver" : "grey"}
+        strokeWidth={1}
+        fillOpacity={0}
+      ></path>
+    </g>
   );
 }

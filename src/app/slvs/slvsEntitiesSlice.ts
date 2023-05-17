@@ -1,7 +1,10 @@
 import { invoke } from "@tauri-apps/api";
+import {
+  TempEntity,
+  cubicHandles,
+} from "../../features/objects/selectionSlice";
 import { Coords, Handle } from "../../features/types";
 import { slvsSlice } from "./slvsSlice";
-import { TempEntity } from "../../features/objects/selectionSlice";
 
 export type Entity = Arc | Circle | Cubic | Point | Line;
 type EntityData = ArcData | CircleData | CubicData | PointData | LineData;
@@ -99,6 +102,23 @@ export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
                   group: data.group,
                   center: data.coords[0],
                   radius: Math.hypot(centerX - pointX, centerY - pointY),
+                },
+              });
+              break;
+
+            case "Cubic":
+              let [startPoint, startControl, endControl, endPoint] =
+                cubicHandles(
+                  data.coords[0] as Coords,
+                  data.coords[1] as Coords
+                );
+              newEntityHandle = await invoke("add_cubic", {
+                data: {
+                  group: data.group,
+                  start_point: startPoint,
+                  start_control: startControl,
+                  end_control: endControl,
+                  end_point: endPoint,
                 },
               });
               break;
