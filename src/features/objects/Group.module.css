@@ -4,9 +4,7 @@
   justify-content: space-between;
 }
 
-.active {
+.activeGroup {
+  composes: group;
   color: white;
-}
-
-.delete {
 }

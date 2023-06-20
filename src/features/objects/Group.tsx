@@ -14,7 +14,7 @@ export default function Group({ group }: { group: number }) {
 
   return (
     <li
-      className={`${style.group} ${active_group ? style.active : ""}`}
+      className={`${active_group ? style.activeGroup : style.group}`}
       onClick={() => dispatch(activateGroup(group))}
     >
       <p className={style.label}>{`Group ${group}`}</p>
