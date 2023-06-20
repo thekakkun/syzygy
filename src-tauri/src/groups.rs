@@ -8,7 +8,7 @@ pub fn get_groups(sys_state: State<Drawing>, canvas_state: State<Canvas>) -> Vec
     let canvas = canvas_state.0;
 
     let canvas_group = sys.entity_data(&canvas).expect("Canvas exists").group;
-    sys.group_handles()
+    sys.groups()
         .iter()
         .filter(|&group| *group != canvas_group)
         .cloned()

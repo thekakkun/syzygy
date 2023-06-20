@@ -8,9 +8,8 @@ mod groups;
 use slvs::{
     entity::{EntityHandle, Normal, Point, Workplane},
     group::Group,
-    make_quaternion,
-    solver::SolveOkay,
-    target::In3d,
+    system::SolveResult,
+    utils::make_quaternion,
     System,
 };
 use std::sync::Mutex;
@@ -20,10 +19,13 @@ pub struct Drawing(Mutex<System>);
 pub struct Canvas(EntityHandle<Workplane>);
 
 #[tauri::command]
-fn solve(group: Group, sys_state: State<Drawing>) -> Result<SolveOkay, &'static str> {
+fn solve(group: Group, sys_state: State<Drawing>) -> Result<i32, &'static str> {
     let mut sys = sys_state.0.lock().unwrap();
-    let result = sys.solve(&group);
-    result.map_err(|_| "unable to solve")
+    if let SolveResult::Ok { dof } = sys.solve(&group) {
+        Ok(dof)
+    } else {
+        Err("Unable to solve")
+    }
 }
 
 fn main() {
@@ -31,7 +33,7 @@ fn main() {
         .setup(|app| {
             let mut sys = System::new();
             let g = sys.add_group();
-            let origin = sys.sketch(Point::<In3d>::new(g, 0.0, 0.0, 0.0))?;
+            let origin = sys.sketch(Point::new_in_3d(g, [0.0, 0.0, 0.0]))?;
             let normal = sys.sketch(Normal::new_in_3d(
                 g,
                 make_quaternion([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]),
