@@ -1,16 +1,10 @@
 import { LineData } from "../../../app/slvs/slvsEntitiesSlice";
 
-export default function Line({
-  data,
-  temp = false,
-}: {
-  data: LineData;
-  temp?: boolean;
-}) {
+export default function Line({ entityData }: { entityData: LineData }) {
   let {
     point_a: [pointAX, pointAY],
     point_b: [pointBX, pointBY],
-  } = data;
+  } = entityData;
 
   return (
     <path
@@ -18,7 +12,7 @@ export default function Line({
         M ${pointAX} ${pointAY}
         L ${pointBX} ${pointBY}
       `}
-      stroke={temp ? "silver" : "black"}
+      stroke={"black"}
       strokeWidth={2}
     ></path>
   );

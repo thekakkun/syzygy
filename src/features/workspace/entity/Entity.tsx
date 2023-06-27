@@ -1,25 +1,25 @@
-import { Entity } from "../../../app/slvs/slvsEntitiesSlice";
+import { EntityData } from "../../../app/slvs/slvsEntitiesSlice";
 import Arc from "./Arc";
 import Circle from "./Circle";
 import Cubic from "./Cubic";
 import Line from "./Line";
 import Point from "./Point";
 
-export default function EntityPath({ entity }: { entity: Entity }) {
-  switch (entity.type) {
-    case "Arc":
-      return <Arc data={entity.data}></Arc>;
+export default function EntityPath({ entityData }: { entityData: EntityData }) {
+  switch (entityData.type) {
+    case "ArcOfCircle":
+      return <Arc {...{ entityData }}></Arc>;
 
     case "Circle":
-      return <Circle data={entity.data}></Circle>;
+      return <Circle {...{ entityData }}></Circle>;
 
     case "Cubic":
-      return <Cubic data={entity.data}></Cubic>;
+      return <Cubic {...{ entityData }}></Cubic>;
 
-    case "Line":
-      return <Line data={entity.data}></Line>;
+    case "LineSegment":
+      return <Line {...{ entityData }}></Line>;
 
     case "Point":
-      return <Point data={entity.data}></Point>;
+      return <Point {...{ entityData }}></Point>;
   }
 }

@@ -51,7 +51,7 @@ export interface LineData extends BaseEntityData {
 }
 export interface PointData extends BaseEntityData {
   type: "Point";
-  coord: Coords;
+  coords: Coords;
 }
 
 export const slvsEntitiesSlice = slvsSlice.injectEndpoints({

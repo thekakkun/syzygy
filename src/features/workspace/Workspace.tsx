@@ -1,31 +1,25 @@
-import { useEffect } from "react";
-import {
-  useAddEntityMutation,
-  useGetEntitiesQuery,
-} from "../../app/slvs/slvsEntitiesSlice";
-import { useAppDispatch, useAppSelector } from "../../app/store";
+import { useGetEntitiesQuery } from "../../app/slvs/slvsEntitiesSlice";
+import { useAppDispatch } from "../../app/store";
 import { setCoord } from "../cursor/cursorSlice";
-import { clearSelection, updateTempEntity } from "../objects/selectionSlice";
 import style from "./Workspace.module.css";
 import EntityPath from "./entity/Entity";
-import TempEntityPath from "./entity/TempEntity";
 
 export default function Workspace() {
   const dispatch = useAppDispatch();
   const { data: entities } = useGetEntitiesQuery();
-  const [addEntity] = useAddEntityMutation();
+  // const [addEntity] = useAddEntityMutation();
 
-  const { selected } = useAppSelector((state) => state.selection);
-  const activeGroup = useAppSelector((state) => state.selection.group);
+  // const { selected } = useAppSelector((state) => state.selection);
+  // const activeGroup = useAppSelector((state) => state.selection.group);
 
-  useEffect(() => {
-    const tempEntityReady =
-      "type" in selected && selected.coords.every(Boolean);
-    if (tempEntityReady && activeGroup) {
-      addEntity({ group: activeGroup, ...selected });
-      dispatch(clearSelection());
-    }
-  }, [selected, activeGroup]);
+  // useEffect(() => {
+  //   const tempEntityReady =
+  //     "type" in selected && selected.coords.every(Boolean);
+  //   if (tempEntityReady && activeGroup) {
+  //     addEntity({ group: activeGroup, ...selected });
+  //     dispatch(clearSelection());
+  //   }
+  // }, [selected, activeGroup]);
 
   return (
     <div className={style.workspace}>
@@ -36,24 +30,18 @@ export default function Workspace() {
         onMouseMove={(e) =>
           dispatch(setCoord([e.nativeEvent.offsetX, e.nativeEvent.offsetY]))
         }
-        onClick={(e) => {
-          if ("type" in selected) {
-            dispatch(
-              updateTempEntity([e.nativeEvent.offsetX, e.nativeEvent.offsetY])
-            );
-          }
-        }}
+        // onClick={(e) => {
+        //   if ("type" in selected) {
+        //     dispatch(
+        //       updateTempEntity([e.nativeEvent.offsetX, e.nativeEvent.offsetY])
+        //     );
+        //   }
+        // }}
       >
-        {entities?.map((entity) => (
-          <EntityPath
-            key={`entity_${entity.handle.handle}`}
-            entity={entity}
-          ></EntityPath>
-        ))}
-
-        {"type" in selected ? (
-          <TempEntityPath entity={selected}></TempEntityPath>
-        ) : null}
+        {entities &&
+          Object.values(entities).map((entityData, i) => (
+            <EntityPath key={`entity_${i}`} {...{ entityData }}></EntityPath>
+          ))}
       </svg>
     </div>
   );

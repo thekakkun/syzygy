@@ -1,18 +1,12 @@
 import { CubicData } from "../../../app/slvs/slvsEntitiesSlice";
 
-export default function Cubic({
-  data,
-  temp = false,
-}: {
-  data: CubicData;
-  temp?: boolean;
-}) {
+export default function Cubic({ entityData }: { entityData: CubicData }) {
   let {
     start_point: [startX, startY],
     start_control: [start_controlX, start_controlY],
     end_control: [end_controlX, end_controlY],
     end_point: [endX, endY],
-  } = data;
+  } = entityData;
 
   return (
     <g>
@@ -23,7 +17,7 @@ export default function Cubic({
           ${end_controlX} ${end_controlY},
           ${endX} ${endY}
       `}
-        stroke={temp ? "grey" : "black"}
+        stroke={"black"}
         strokeWidth={2}
         fillOpacity={0}
       ></path>
@@ -32,7 +26,7 @@ export default function Cubic({
           M ${startX} ${startY}
           L ${start_controlX} ${start_controlY}
       `}
-        stroke={temp ? "silver" : "grey"}
+        stroke={"grey"}
         strokeWidth={1}
         fillOpacity={0}
       ></path>
@@ -41,7 +35,7 @@ export default function Cubic({
           M ${endX} ${endY}
           L ${end_controlX} ${end_controlY}
       `}
-        stroke={temp ? "silver" : "grey"}
+        stroke={"grey"}
         strokeWidth={1}
         fillOpacity={0}
       ></path>
