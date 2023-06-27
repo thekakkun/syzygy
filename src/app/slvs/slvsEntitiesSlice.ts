@@ -1,148 +1,89 @@
 import { invoke } from "@tauri-apps/api";
-import {
-  TempEntity,
-  cubicHandles,
-} from "../../features/objects/selectionSlice";
-import { Coords, Handle } from "../../features/types";
+import { Coords } from "../../features/types";
 import { slvsSlice } from "./slvsSlice";
 
-export type Entity = Arc | Circle | Cubic | Point | Line;
-type EntityData = ArcData | CircleData | CubicData | PointData | LineData;
-export type EntityName = "Arc" | "Circle" | "Cubic" | "Line" | "Point";
-
-interface BaseEntity {
-  handle: Handle;
-  type: EntityName;
+export interface Entities {
+  [handle: number]: EntityData;
 }
-
+// This corresponds to SomeEntityHandle
+export interface EntityHandle {
+  handle: number;
+  type: EntityType;
+}
+export type EntityData =
+  | ArcData
+  | CircleData
+  | CubicData
+  | LineData
+  | PointData;
+export type EntityType =
+  | "ArcOfCircle"
+  | "Circle"
+  | "Cubic"
+  | "LineSegment"
+  | "Point";
 interface BaseEntityData {
+  type: EntityType;
   group: number;
 }
-
-interface Arc extends BaseEntity {
-  type: "Arc";
-  data: ArcData & BaseEntityData;
-}
-export interface ArcData {
+export interface ArcData extends BaseEntityData {
+  type: "ArcOfCircle";
   center: Coords;
   start: Coords;
   end: Coords;
 }
-
-interface Circle extends BaseEntity {
+export interface CircleData extends BaseEntityData {
   type: "Circle";
-  data: CircleData & BaseEntityData;
-}
-export interface CircleData {
   center: Coords;
   radius: number;
 }
-
-interface Cubic extends BaseEntity {
+export interface CubicData extends BaseEntityData {
   type: "Cubic";
-  data: CubicData & BaseEntityData;
-}
-export interface CubicData {
   start_point: Coords;
   start_control: Coords;
   end_control: Coords;
   end_point: Coords;
 }
-
-interface Point extends BaseEntity {
-  type: "Point";
-  data: PointData & BaseEntityData;
-}
-export interface PointData {
-  coords: Coords;
-}
-
-interface Line extends BaseEntity {
-  type: "Line";
-  data: LineData & BaseEntityData;
-}
-export interface LineData {
+export interface LineData extends BaseEntityData {
+  type: "LineSegment";
   point_a: Coords;
   point_b: Coords;
+}
+export interface PointData extends BaseEntityData {
+  type: "Point";
+  coord: Coords;
 }
 
 export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getEntities: builder.query<Entity[], void>({
+    getEntities: builder.query<Entities, void>({
       queryFn: async () => {
-        let entities: Entity[] = await invoke("get_entities");
+        let entities: Entities = await invoke("get_entities");
         console.log(entities);
         return { data: entities };
       },
       providesTags: ["Entity"],
     }),
-    addEntity: builder.mutation<Handle, BaseEntityData & TempEntity>({
-      queryFn: async (data) => {
+    getEntity: builder.query<EntityData, EntityHandle>({
+      queryFn: async (entityHandle) => {
         try {
-          let newEntityHandle: Handle;
-
-          switch (data.type) {
-            case "Arc":
-              newEntityHandle = await invoke("add_arc", {
-                data: {
-                  group: data.group,
-                  center: data.coords[0],
-                  start: data.coords[1],
-                  end: data.coords[2],
-                },
-              });
-              break;
-
-            case "Circle":
-              let [centerX, centerY] = data.coords[0] as Coords;
-              let [pointX, pointY] = data.coords[1] as Coords;
-
-              newEntityHandle = await invoke("add_circle", {
-                data: {
-                  group: data.group,
-                  center: data.coords[0],
-                  radius: Math.hypot(centerX - pointX, centerY - pointY),
-                },
-              });
-              break;
-
-            case "Cubic":
-              let [startPoint, startControl, endControl, endPoint] =
-                cubicHandles(
-                  data.coords[0] as Coords,
-                  data.coords[1] as Coords
-                );
-              newEntityHandle = await invoke("add_cubic", {
-                data: {
-                  group: data.group,
-                  start_point: startPoint,
-                  start_control: startControl,
-                  end_control: endControl,
-                  end_point: endPoint,
-                },
-              });
-              break;
-
-            case "Line":
-              newEntityHandle = await invoke("add_line", {
-                data: {
-                  group: data.group,
-                  point_a: data.coords[0],
-                  point_b: data.coords[1],
-                },
-              });
-              break;
-
-            case "Point":
-              newEntityHandle = await invoke("add_point", {
-                data: {
-                  group: data.group,
-                  coords: data.coords[0],
-                },
-              });
-              break;
-          }
-          return { data: newEntityHandle };
+          let entityData: EntityData = await invoke("get_entity", {
+            handle: entityHandle,
+          });
+          return { data: entityData };
+        } catch (err) {
+          console.log(`error getting entity ${entityHandle}: ${err}`);
+          return { error: err as string };
+        }
+      },
+    }),
+    addEntity: builder.mutation<EntityHandle, EntityData>({
+      queryFn: async (entityData) => {
+        try {
+          let entityHandle: EntityHandle = await invoke("add_entity", {
+            data: entityData,
+          });
+          return { data: entityHandle };
         } catch (err) {
           console.log(err);
           return { error: err as string };
@@ -152,5 +93,64 @@ export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
     }),
   }),
 });
+
+// export type Entity = Arc | Circle | Cubic | Point | Line;
+// export type EntityName = "Arc" | "Circle" | "Cubic" | "Line" | "Point";
+
+// export interface EntityHandle {
+//   handle: Handle;
+//   type: EntityName;
+// }
+
+// interface EntityData {
+//   group: number;
+// }
+
+// interface Arc extends EntityHandle {
+//   type: "Arc";
+//   data: ArcData & EntityData;
+// }
+// export interface ArcData {
+//   center: Coords;
+//   start: Coords;
+//   end: Coords;
+// }
+
+// interface Circle extends EntityHandle {
+//   type: "Circle";
+//   data: CircleData & EntityData;
+// }
+// export interface CircleData {
+//   center: Coords;
+//   radius: number;
+// }
+
+// interface Cubic extends EntityHandle {
+//   type: "Cubic";
+//   data: CubicData & EntityData;
+// }
+// export interface CubicData {
+//   start_point: Coords;
+//   start_control: Coords;
+//   end_control: Coords;
+//   end_point: Coords;
+// }
+
+// interface Point extends EntityHandle {
+//   type: "Point";
+//   data: PointData & EntityData;
+// }
+// export interface PointData {
+//   coords: Coords;
+// }
+
+// interface Line extends EntityHandle {
+//   type: "Line";
+//   data: LineData & EntityData;
+// }
+// export interface LineData {
+//   point_a: Coords;
+//   point_b: Coords;
+// }
 
 export const { useGetEntitiesQuery, useAddEntityMutation } = slvsEntitiesSlice;
