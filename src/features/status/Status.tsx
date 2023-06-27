@@ -1,5 +1,4 @@
-
-import { useAppSelector } from "../app/store";
+import { useAppSelector } from "../../app/store";
 import style from "./Status.module.css";
 
 export default function Status() {
