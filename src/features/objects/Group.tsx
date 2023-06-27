@@ -1,4 +1,6 @@
 import { EntityHandle } from "../../app/slvs/slvsEntitiesSlice";
+import { useAppDispatch } from "../../app/store";
+import { toggleSelection } from "../cursor/selectionSlice";
 import Entity from "./Entity";
 
 export default function Group({
@@ -13,10 +15,10 @@ export default function Group({
 
   // const active_group =
   //   useAppSelector((state) => state.selection.group) === group;
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   return (
-    <li>
+    <li onClick={() => dispatch(toggleSelection({ type: "group", handle }))}>
       {handle}
       <ul>
         {entities.map((entity) => (

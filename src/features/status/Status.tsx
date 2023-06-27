@@ -6,12 +6,12 @@ export default function Status() {
     coord: [x, y],
   } = useAppSelector((state) => state.cursor);
 
-  const { selected } = useAppSelector((state) => state.selection);
+  const { type, selection } = useAppSelector((state) => state.selection);
 
   return (
     <div className={style.status}>
       <p>
-        ({x}, {y}) | {"type" in selected ? selected.type : ""}
+        ({x}, {y}) | {`${type}: ${selection}`}
       </p>
     </div>
   );

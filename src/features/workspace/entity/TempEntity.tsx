@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../../app/store";
-import { TempEntity, cubicHandles } from "../../objects/selectionSlice";
+import { TempEntity, cubicHandles } from "../../objects/OLDselectionSlice";
 import Arc from "./Arc";
 import Circle from "./Circle";
 import Cubic from "./Cubic";

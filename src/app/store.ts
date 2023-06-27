@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import cursorReducer from "../features/cursor/cursorSlice";
-import { slvsSlice } from "./slvs/slvsSlice";
-import selectionReducer from "../features/objects/selectionSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+
+import cursorReducer from "../features/cursor/cursorSlice";
+import selectionReducer from "../features/cursor/selectionSlice";
+import { slvsSlice } from "./slvs/slvsSlice";
 
 export const store = configureStore({
   reducer: {
