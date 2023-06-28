@@ -7,6 +7,8 @@ import EntityPath from "./Entity";
 export default function Workspace() {
   const dispatch = useAppDispatch();
   const { data: entities } = useGetEntitiesQuery();
+  
+
 
   return (
     <div className={style.workspace}>
@@ -19,9 +21,15 @@ export default function Workspace() {
         }
       >
         {entities &&
-          Object.values(entities).map((entityData, i) => (
-            <EntityPath key={`entity_${i}`} {...{ entityData }}></EntityPath>
-          ))}
+          Object.entries(entities).map(([handle, entityData]) => {
+            return (
+              <EntityPath
+                key={`entity_${handle}`}
+                handle={parseInt(handle)}
+                entityData={entityData}
+              ></EntityPath>
+            );
+          })}
       </svg>
     </div>
   );

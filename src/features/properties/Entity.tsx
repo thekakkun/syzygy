@@ -7,7 +7,7 @@ import { arcAngle, arcRadius } from "../../common/utils/geometry";
 export default function Entity({ handles }: { handles: number[] }) {
   switch (handles.length) {
     case 0:
-      return <></>;
+      return <p>Nothing selected</p>;
     case 1:
       const handle = handles[0];
       const { entityData } = useGetEntitiesQuery(undefined, {
@@ -110,8 +110,6 @@ function entityProperty(entityData: EntityData) {
     }
     case "Point": {
       let [x, y] = entityData.coords;
-
-      console.log(entityData);
 
       return (
         <dl>

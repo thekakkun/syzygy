@@ -17,7 +17,7 @@ export default function Objects() {
           {Object.entries(groups).map(([handle, elements]) => (
             <Group
               key={`group_${handle}`}
-              handle={handle as unknown as number}
+              handle={parseInt(handle)}
               entities={elements.entities}
             ></Group>
           ))}

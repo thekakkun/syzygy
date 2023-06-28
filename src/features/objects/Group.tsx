@@ -11,14 +11,16 @@ export default function Group({
   handle: number;
   entities: EntityHandle[];
 }) {
-  const { type, handles } = useAppSelector((state) => state.selection);
+  const selection = useAppSelector((state) => state.selection);
   const dispatch = useAppDispatch();
 
   return (
     <li onClick={() => dispatch(toggleSelection({ type: "group", handle }))}>
       <span
         className={
-          type === "group" && handles.includes(handle) ? style.selected : ""
+          selection.type === "group" && selection.handles.includes(handle)
+            ? style.selected
+            : ""
         }
       >
         Thingy {handle}

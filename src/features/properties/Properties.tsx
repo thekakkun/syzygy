@@ -1,20 +1,20 @@
 import { useAppSelector } from "../../app/store";
-import { ElementType } from "../cursor/selectionSlice";
+import { ElementType, Selection } from "../cursor/selectionSlice";
 import Entity from "./Entity";
 import Group from "./Group";
 import style from "./Properties.module.css";
 
 export default function Properties() {
-  const { type, handles } = useAppSelector((state) => state.selection);
+  const selection = useAppSelector((state) => state.selection);
 
-  return <div className={style.properties}>{getProperty(type, handles)}</div>;
+  return <div className={style.properties}>{getProperty(selection)}</div>;
 }
 
-function getProperty(type: ElementType, handles: number[]) {
-  switch (type) {
+function getProperty(selection: Selection) {
+  switch (selection.type) {
     case "group":
-      return <Group handles={handles}></Group>;
+      return <Group handles={selection.handles}></Group>;
     case "entity":
-      return <Entity handles={handles}></Entity>;
+      return <Entity handles={selection.handles}></Entity>;
   }
 }

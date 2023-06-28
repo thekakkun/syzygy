@@ -31,7 +31,6 @@ export const selectionSlice = createSlice({
           ];
         }
       } else {
-        
         state.type = action.payload.type;
         state.handles = [action.payload.handle];
       }

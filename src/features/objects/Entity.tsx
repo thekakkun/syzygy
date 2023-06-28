@@ -4,13 +4,13 @@ import { toggleSelection } from "../cursor/selectionSlice";
 import style from "./Entity.module.css";
 
 export default function Entity({ entity }: { entity: EntityHandle }) {
-  const { type, handles } = useAppSelector((state) => state.selection);
+  const selection = useAppSelector((state) => state.selection);
   const dispatch = useAppDispatch();
 
   return (
     <li
       className={
-        type === "entity" && handles.includes(entity.handle)
+        selection.type === "entity" && selection.handles.includes(entity.handle)
           ? style.selected
           : ""
       }

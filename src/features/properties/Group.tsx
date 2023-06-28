@@ -3,7 +3,7 @@ import { useGetGroupsQuery } from "../../app/slvs/slvsGroupsSlice";
 export default function Group({ handles }: { handles: number[] }) {
   switch (handles.length) {
     case 0:
-      return <></>;
+      return <p>Nothing selected</p>;
     case 1:
       const { data: groups } = useGetGroupsQuery();
       const handle = handles[0];

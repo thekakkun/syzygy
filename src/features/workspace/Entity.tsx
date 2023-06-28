@@ -1,8 +1,23 @@
 import { EntityData } from "../../app/slvs/slvsEntitiesSlice";
+import { useAppSelector } from "../../app/store";
 import { arcRadius } from "../../common/utils/geometry";
 
-export default function EntityPath({ entityData }: { entityData: EntityData }) {
+export default function EntityPath({
+  handle,
+  entityData,
+}: {
+  handle: number;
+  entityData: EntityData;
+}) {
   const point_size = 5;
+
+  const selection = useAppSelector((state) => state.selection);
+  let group_selected =
+    selection.type === "group" && selection.handles.includes(entityData.group);
+  let entity_selected =
+    selection.type === "entity" && selection.handles.includes(handle);
+
+  let selected = group_selected || entity_selected;
 
   switch (entityData.type) {
     case "ArcOfCircle": {
@@ -18,7 +33,7 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
             M ${startX} ${startY}
             A ${radius} ${radius} 0 0 1 ${endX} ${endY}
           `}
-          stroke={"black"}
+          stroke={selected ? "red" : "black"}
           strokeWidth={2}
           fillOpacity={0}
         ></path>
@@ -36,7 +51,7 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
           cx={centerX}
           cy={centerY}
           r={radius}
-          stroke={"black"}
+          stroke={selected ? "red" : "black"}
           strokeWidth={2}
           fillOpacity={0}
         ></circle>
@@ -59,7 +74,7 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
               ${endControlX} ${endControlY},
               ${endX} ${endY}
           `}
-            stroke={"black"}
+            stroke={selected ? "red" : "black"}
             strokeWidth={2}
             fillOpacity={0}
           ></path>
@@ -97,7 +112,7 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
             M ${pointAX} ${pointAY}
             L ${pointBX} ${pointBY}
           `}
-          stroke={"black"}
+          stroke={selected ? "red" : "black"}
           strokeWidth={2}
         ></path>
       );
@@ -115,7 +130,7 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
             Z
           `}
           fill="white"
-          stroke={"blue"}
+          stroke={selected ? "red" : "blue"}
           strokeWidth={1}
         ></path>
       );
