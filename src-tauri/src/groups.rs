@@ -24,7 +24,21 @@ pub fn get_groups(
         .iter()
         .filter(|&group| *group != canvas_group)
         .for_each(|group| {
-            let entities = sys.entity_handles(Some(group), None::<&SomeEntityHandle>);
+            let entities = sys
+                .entity_handles(Some(group), None::<&SomeEntityHandle>)
+                .iter()
+                .filter(|handle| {
+                    matches!(
+                        handle,
+                        SomeEntityHandle::ArcOfCircle(_)
+                            | SomeEntityHandle::Circle(_)
+                            | SomeEntityHandle::Cubic(_)
+                            | SomeEntityHandle::LineSegment(_)
+                            | SomeEntityHandle::Point(_)
+                    )
+                })
+                .cloned()
+                .collect();
             groups.insert(group.handle(), GroupData { entities });
         });
 
