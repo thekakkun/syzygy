@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api";
-import { Coords } from "../../features/types";
+import { Coords } from "../../common/types";
 import { slvsSlice } from "./slvsSlice";
 
 export interface Entities {

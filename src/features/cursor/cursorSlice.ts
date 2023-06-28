@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Coords } from "../types";
+import { Coords } from "../../common/types";
 
 interface CursorState {
   coord: Coords;
