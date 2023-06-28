@@ -6,6 +6,7 @@ import style from "./Properties.module.css";
 
 export default function Properties() {
   const { type, handles } = useAppSelector((state) => state.selection);
+
   return <div className={style.properties}>{getProperty(type, handles)}</div>;
 }
 
