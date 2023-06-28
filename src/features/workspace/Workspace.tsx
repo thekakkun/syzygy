@@ -7,19 +7,6 @@ import EntityPath from "./Entity";
 export default function Workspace() {
   const dispatch = useAppDispatch();
   const { data: entities } = useGetEntitiesQuery();
-  // const [addEntity] = useAddEntityMutation();
-
-  // const { selected } = useAppSelector((state) => state.selection);
-  // const activeGroup = useAppSelector((state) => state.selection.group);
-
-  // useEffect(() => {
-  //   const tempEntityReady =
-  //     "type" in selected && selected.coords.every(Boolean);
-  //   if (tempEntityReady && activeGroup) {
-  //     addEntity({ group: activeGroup, ...selected });
-  //     dispatch(clearSelection());
-  //   }
-  // }, [selected, activeGroup]);
 
   return (
     <div className={style.workspace}>
@@ -30,13 +17,6 @@ export default function Workspace() {
         onMouseMove={(e) =>
           dispatch(setCoord([e.nativeEvent.offsetX, e.nativeEvent.offsetY]))
         }
-        // onClick={(e) => {
-        //   if ("type" in selected) {
-        //     dispatch(
-        //       updateTempEntity([e.nativeEvent.offsetX, e.nativeEvent.offsetY])
-        //     );
-        //   }
-        // }}
       >
         {entities &&
           Object.values(entities).map((entityData, i) => (

@@ -23,18 +23,6 @@ export default function Objects() {
           ))}
         </ul>
       )}
-
-      {/* <ul>
-        {Object.entries(groups ?? {}).map(([handle, elements]) => {
-          return <li>{handle}</li>;
-        })}
-      </ul> */}
-
-      {/* <ul>
-        {groups?.map((group) => {
-          return <Group key={`group_${group}`} group={group}></Group>;
-        })}
-      </ul> */}
     </div>
   );
 }
