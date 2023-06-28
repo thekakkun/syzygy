@@ -6,12 +6,10 @@ export default function Status() {
     coord: [x, y],
   } = useAppSelector((state) => state.cursor);
 
-  const { type, selection } = useAppSelector((state) => state.selection);
-
   return (
     <div className={style.status}>
       <p>
-        ({x}, {y}) | {`${type}: ${selection}`}
+        ({x}, {y})
       </p>
     </div>
   );

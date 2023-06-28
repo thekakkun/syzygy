@@ -1,4 +1,5 @@
 import { EntityData } from "../../app/slvs/slvsEntitiesSlice";
+import { arcRadius } from "../../common/utils/geometry";
 
 export default function EntityPath({ entityData }: { entityData: EntityData }) {
   const point_size = 5;
@@ -6,11 +7,10 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
   switch (entityData.type) {
     case "ArcOfCircle": {
       let {
-        center: [centerX, centerY],
         start: [startX, startY],
         end: [endX, endY],
       } = entityData;
-      let radius = Math.hypot(centerX - startX, centerY - startY);
+      let radius = arcRadius(entityData);
 
       return (
         <path
@@ -45,8 +45,8 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
     case "Cubic": {
       let {
         start_point: [startX, startY],
-        start_control: [start_controlX, start_controlY],
-        end_control: [end_controlX, end_controlY],
+        start_control: [startControlX, startControlY],
+        end_control: [endControlX, endControlY],
         end_point: [endX, endY],
       } = entityData;
 
@@ -55,8 +55,8 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
           <path
             d={`
               M ${startX} ${startY}
-              C ${start_controlX} ${start_controlY},
-              ${end_controlX} ${end_controlY},
+              C ${startControlX} ${startControlY},
+              ${endControlX} ${endControlY},
               ${endX} ${endY}
           `}
             stroke={"black"}
@@ -66,7 +66,7 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
           <path
             d={`
               M ${startX} ${startY}
-              L ${start_controlX} ${start_controlY}
+              L ${startControlX} ${startControlY}
           `}
             stroke={"grey"}
             strokeWidth={1}
@@ -75,7 +75,7 @@ export default function EntityPath({ entityData }: { entityData: EntityData }) {
           <path
             d={`
               M ${endX} ${endY}
-              L ${end_controlX} ${end_controlY}
+              L ${endControlX} ${endControlY}
           `}
             stroke={"grey"}
             strokeWidth={1}
