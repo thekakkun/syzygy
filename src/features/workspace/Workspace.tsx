@@ -2,7 +2,7 @@ import { useGetEntitiesQuery } from "../../app/slvs/slvsEntitiesSlice";
 import { useAppDispatch } from "../../app/store";
 import { setCoord } from "../cursor/cursorSlice";
 import style from "./Workspace.module.css";
-import EntityPath from "./entity/Entity";
+import EntityPath from "./Entity";
 
 export default function Workspace() {
   const dispatch = useAppDispatch();
