@@ -25,7 +25,7 @@ pub fn get_groups(
         .filter(|&group| *group != canvas_group)
         .for_each(|group| {
             let entities = sys
-                .entity_handles(Some(group), None::<&SomeEntityHandle>)
+                .entity_handles(Some(group), None)
                 .iter()
                 .filter(|handle| {
                     matches!(
@@ -51,7 +51,7 @@ pub fn get_group(group: Group, sys_state: State<Drawing>) -> Result<GroupData, &
     let groups = sys.groups();
 
     if groups.contains(&group) {
-        let entities = sys.entity_handles(Some(&group), None::<&SomeEntityHandle>);
+        let entities = sys.entity_handles(Some(&group), None);
         Ok(GroupData { entities })
     } else {
         Err("Group not found.")

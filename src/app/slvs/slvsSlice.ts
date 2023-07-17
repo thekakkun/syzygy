@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api";
 
 export const slvsSlice = createApi({
   baseQuery: fakeBaseQuery<string>(),
-  tagTypes: ["Group", "Entity"],
+  tagTypes: ["Group", "Entity", "Object"],
   endpoints: (builder) => ({
     solve: builder.mutation<null, number>({
       queryFn: async (group) => {
@@ -14,7 +14,7 @@ export const slvsSlice = createApi({
           return { error: err as string };
         }
       },
-      invalidatesTags: ["Group", "Entity"],
+      invalidatesTags: ["Group", "Entity", "Object"],
     }),
   }),
 });

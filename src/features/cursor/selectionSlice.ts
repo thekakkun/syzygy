@@ -22,7 +22,7 @@ export const selectionSlice = createSlice({
       if (state.type === action.payload.type) {
         const ix = state.handles.indexOf(action.payload.handle);
 
-        if (ix == -1) {
+        if (ix === -1) {
           state.handles = [...state.handles, action.payload.handle];
         } else {
           state.handles = [

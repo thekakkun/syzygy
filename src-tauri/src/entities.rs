@@ -74,7 +74,7 @@ pub fn get_entities(sys_state: State<Drawing>) -> HashMap<u32, EntityData> {
 
     let mut entities = HashMap::new();
 
-    sys.entity_handles(None, None::<&SomeEntityHandle>)
+    sys.entity_handles(None, None)
         .iter()
         .for_each(|&handle| match handle {
             SomeEntityHandle::ArcOfCircle(h) => {

@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../app/store";
-import { ElementType, Selection } from "../cursor/selectionSlice";
+import { Selection } from "../cursor/selectionSlice";
 import Entity from "./Entity";
 import Group from "./Group";
 import style from "./Properties.module.css";

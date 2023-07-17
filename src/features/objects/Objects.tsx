@@ -1,28 +1,21 @@
-import {
-  useAddGroupMutation,
-  useGetGroupsQuery,
-} from "../../app/slvs/slvsGroupsSlice";
-import Group from "./Group";
+import { useAddGroupMutation } from "../../app/slvs/slvsGroupsSlice";
+import { useGetObjectsQuery } from "../../app/slvs/slvsObjectsSlice";
 import style from "./Objects.module.css";
+import Object from "./Object";
 
 export default function Objects() {
-  const { data: groups } = useGetGroupsQuery();
   const [addGroup] = useAddGroupMutation();
+
+  const { data: objects } = useGetObjectsQuery();
 
   return (
     <div className={style.objects}>
       <button onClick={() => addGroup()}>add group</button>
-      {groups && (
-        <ul>
-          {Object.entries(groups).map(([handle, elements]) => (
-            <Group
-              key={`group_${handle}`}
-              handle={parseInt(handle)}
-              entities={elements.entities}
-            ></Group>
-          ))}
-        </ul>
-      )}
+      <ul>
+        {objects?.map((handle) => (
+          <Object key={`object_${handle}`} handle={handle}></Object>
+        ))}
+      </ul>
     </div>
   );
 }

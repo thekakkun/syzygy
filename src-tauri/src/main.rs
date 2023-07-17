@@ -4,9 +4,13 @@
 mod constraints;
 mod entities;
 mod groups;
+mod objects;
 
 use slvs::{
-    entity::{ArcOfCircle, Circle, Distance, EntityHandle, LineSegment, Normal, Point, Workplane},
+    constraint::PointsCoincident,
+    entity::{
+        ArcOfCircle, Circle, Cubic, Distance, EntityHandle, LineSegment, Normal, Point, Workplane,
+    },
     group::Group,
     system::SolveResult,
     utils::make_quaternion,
@@ -40,44 +44,167 @@ fn main() {
             ))?;
             let canvas = sys.sketch(Workplane::new(g, origin, normal))?;
 
-            let g1 = sys.add_group();
-            let p1 = sys
-                .sketch(Point::new_on_workplane(g1, canvas, [10.0, 20.0]))
-                .expect("point in 2d created");
-            let p2 = sys
-                .sketch(Point::new_on_workplane(g1, canvas, [20.0, 10.0]))
-                .expect("point in 2d created");
-            sys.sketch(LineSegment::new(g1, p1, p2))
-                .expect("line segment created");
-            let arc_center = sys
-                .sketch(Point::new_on_workplane(g1, canvas, [100.0, 120.0]))
-                .expect("point in 2d created");
-            let arc_start = sys
-                .sketch(Point::new_on_workplane(g1, canvas, [120.0, 110.0]))
-                .expect("point in 2d created");
-            let arc_end = sys
-                .sketch(Point::new_on_workplane(g1, canvas, [115.0, 115.0]))
-                .expect("point in 2d created");
-            sys.sketch(ArcOfCircle::new(g1, canvas, arc_center, arc_start, arc_end))
-                .expect("arc created");
-
-            let g2 = sys.add_group();
+            // Draw a circle
+            let circle_group = sys.add_group();
             let circle_center = sys
-                .sketch(Point::new_on_workplane(g2, canvas, [200.0, 200.0]))
+                .sketch(Point::new_on_workplane(
+                    circle_group,
+                    canvas,
+                    [100.0, 100.0],
+                ))
                 .expect("point in 2d created");
             let circle_radius = sys
-                .sketch(Distance::new(g2, 30.0))
+                .sketch(Distance::new(circle_group, 50.0))
                 .expect("distance created");
             let workplane_normal = sys
-                .sketch(Normal::new_on_workplane(g2, canvas))
+                .sketch(Normal::new_on_workplane(circle_group, canvas))
                 .expect("2d normal created");
             sys.sketch(Circle::new(
-                g2,
+                circle_group,
                 workplane_normal,
                 circle_center,
                 circle_radius,
             ))
             .expect("circle created");
+
+            // Draw a triangle
+            let triangle_group = sys.add_group();
+            let p1a = sys
+                .sketch(Point::new_on_workplane(
+                    triangle_group,
+                    canvas,
+                    [250.0, 50.0],
+                ))
+                .expect("point in 2d created");
+            let p1b = sys
+                .sketch(Point::new_on_workplane(
+                    triangle_group,
+                    canvas,
+                    [250.0, 150.0],
+                ))
+                .expect("point in 2d created");
+            sys.sketch(LineSegment::new(triangle_group, p1a, p1b))
+                .expect("line segment created");
+            let p2a = sys
+                .sketch(Point::new_on_workplane(
+                    triangle_group,
+                    canvas,
+                    [250.0, 150.0],
+                ))
+                .expect("point in 2d created");
+            let p2b = sys
+                .sketch(Point::new_on_workplane(
+                    triangle_group,
+                    canvas,
+                    [350.0, 150.0],
+                ))
+                .expect("point in 2d created");
+            sys.sketch(LineSegment::new(triangle_group, p2a, p2b))
+                .expect("line segment created");
+            let p3a = sys
+                .sketch(Point::new_on_workplane(
+                    triangle_group,
+                    canvas,
+                    [350.0, 150.0],
+                ))
+                .expect("point in 2d created");
+            let p3b = sys
+                .sketch(Point::new_on_workplane(
+                    triangle_group,
+                    canvas,
+                    [250.0, 50.0],
+                ))
+                .expect("point in 2d created");
+            sys.sketch(LineSegment::new(triangle_group, p3a, p3b))
+                .expect("line segment created");
+            sys.constrain(PointsCoincident::new(triangle_group, p1b, p2a, None))
+                .expect("constraint added");
+            sys.constrain(PointsCoincident::new(triangle_group, p2b, p3a, None))
+                .expect("constraint added");
+            sys.constrain(PointsCoincident::new(triangle_group, p3b, p1a, None))
+                .expect("constraint added");
+
+            // Draw a squiggle
+            let squiggle_group = sys.add_group();
+            let arc_center = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [100.0, 300.0],
+                ))
+                .expect("point in 2d created");
+            let arc_start = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [150.0, 300.0],
+                ))
+                .expect("point in 2d created");
+            let arc_end = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [100.0, 350.0],
+                ))
+                .expect("point in 2d created");
+            sys.sketch(ArcOfCircle::new(
+                squiggle_group,
+                canvas,
+                arc_center,
+                arc_start,
+                arc_end,
+            ))
+            .expect("arc created");
+            let pa = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [100.0, 350.0],
+                ))
+                .expect("point in 2d created");
+            let pb = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [250.0, 350.0],
+                ))
+                .expect("point in 2d created");
+            sys.sketch(LineSegment::new(squiggle_group, pa, pb))
+                .expect("line segment created");
+            let p_s = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [250.0, 350.0],
+                ))
+                .expect("point in 2d created");
+            let p_sc = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [300.0, 350.0],
+                ))
+                .expect("point in 2d created");
+            let p_ec = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [350.0, 300.0],
+                ))
+                .expect("point in 2d created");
+            let p_e = sys
+                .sketch(Point::new_on_workplane(
+                    squiggle_group,
+                    canvas,
+                    [400.0, 300.0],
+                ))
+                .expect("point in 2d created");
+            sys.sketch(Cubic::new(squiggle_group, p_s, p_sc, p_ec, p_e))
+                .expect("cubic created");
+            sys.constrain(PointsCoincident::new(squiggle_group, arc_end, pa, None))
+                .expect("constraint added");
+            sys.constrain(PointsCoincident::new(squiggle_group, pb, p_s, None))
+                .expect("constraint added");
 
             app.manage(Drawing(Mutex::new(sys)));
             app.manage(Canvas(canvas));
@@ -93,6 +220,8 @@ fn main() {
             entities::get_entities,
             entities::get_entity,
             entities::add_entity,
+            objects::get_objects,
+            objects::get_object,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
