@@ -8,23 +8,25 @@ export default function Entity({ segment }: { segment: Segment }) {
   const selection = useAppSelector((state) => state.selection);
   const dispatch = useAppDispatch();
 
-  segment.via;
-
   return "handle" in segment.via ? (
-    <li>{`${segment.via.type} ${segment.via.handle}`}</li>
+    <li
+      className={
+        selection.type === "entity" &&
+        selection.handles.includes(segment.via.handle)
+          ? style.selected
+          : ""
+      }
+      onClick={(e) => {
+        e.stopPropagation();
+        dispatch(
+          toggleSelection({
+            type: "entity",
+            handle: (segment.via as EntityHandle).handle,
+          })
+        );
+      }}
+    >{`${segment.via.type} ${segment.via.handle}`}</li>
   ) : (
     <></>
   );
-
-  // <li
-  //   className={
-  //     selection.type === "entity" && selection.handles.includes(entity.handle)
-  //       ? style.selected
-  //       : ""
-  //   }
-  //   onClick={(e) => {
-  //     e.stopPropagation();
-  //     dispatch(toggleSelection({ type: "entity", handle: entity.handle }));
-  //   }}
-  // >{`${entity.type} ${entity.handle}`}</li>
 }

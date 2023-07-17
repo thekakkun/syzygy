@@ -1,12 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-export type ElementType = "group" | "entity";
+export type ElementType = "object" | "entity";
 export interface Selection {
   type: ElementType;
   handles: number[];
 }
 
-const initialState = { type: "group", handles: [] } as Selection;
+const initialState = { type: "object", handles: [] } as Selection;
 
 export const selectionSlice = createSlice({
   name: "selection",

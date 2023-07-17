@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { EntityHandle } from "../../app/slvs/slvsEntitiesSlice";
 import { useGetObjectQuery } from "../../app/slvs/slvsObjectsSlice";
 import { useAppDispatch, useAppSelector } from "../../app/store";
@@ -12,33 +13,20 @@ export default function Object({ handle }: { handle: number }) {
   const { data: object } = useGetObjectQuery(handle);
 
   return (
-    <li>
-      <span>Thingy {handle}</span>
+    <li
+      className={
+        selection.type === "object" && selection.handles.includes(handle)
+          ? style.selected
+          : undefined
+      }
+      onClick={() => dispatch(toggleSelection({ type: "object", handle }))}
+    >
+      Thingy {handle}
       <ul>
         {object?.map((segment) => (
           <Entity key={segment.from.handle} segment={segment}></Entity>
         ))}
       </ul>
     </li>
-
-    // <li onClick={() => dispatch(toggleSelection({ type: "group", handle }))}>
-    //   <span
-    //     className={
-    //       selection.type === "group" && selection.handles.includes(handle)
-    //         ? style.selected
-    //         : ""
-    //     }
-    //   >
-    //     Thingy {handle}
-    //   </span>
-    //   <ul>
-    //     {entities.map((entity) => (
-    //       <Entity
-    //         key={`${entity.type}_${entity.handle}`}
-    //         entity={entity}
-    //       ></Entity>
-    //     ))}
-    //   </ul>
-    // </li>
   );
 }
