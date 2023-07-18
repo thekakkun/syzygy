@@ -23,9 +23,9 @@ pub struct Drawing(Mutex<System>);
 pub struct Canvas(EntityHandle<Workplane>);
 
 #[tauri::command]
-fn solve(group: Group, sys_state: State<Drawing>) -> Result<i32, &'static str> {
+fn solve(handle: Group, sys_state: State<Drawing>) -> Result<i32, &'static str> {
     let mut sys = sys_state.0.lock().unwrap();
-    if let SolveResult::Ok { dof } = sys.solve(&group) {
+    if let SolveResult::Ok { dof } = sys.solve(&handle) {
         Ok(dof)
     } else {
         Err("Unable to solve")
@@ -217,9 +217,10 @@ fn main() {
             groups::get_group,
             groups::add_group,
             groups::delete_group,
-            entities::get_entities,
+            // entities::get_entities,
             entities::get_entity,
-            entities::add_entity,
+            entities::coords,
+            // entities::add_entity,
             objects::get_objects,
             objects::get_object,
         ])

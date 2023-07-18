@@ -3,18 +3,18 @@ import { invoke } from "@tauri-apps/api";
 
 export const slvsSlice = createApi({
   baseQuery: fakeBaseQuery<string>(),
-  tagTypes: ["Group", "Entity", "Object"],
+  tagTypes: ["Object", "Entity"],
   endpoints: (builder) => ({
     solve: builder.mutation<null, number>({
-      queryFn: async (group) => {
+      queryFn: async (handle) => {
         try {
-          await invoke("solve", { group: group });
+          await invoke("solve", { handle });
           return { data: null };
         } catch (err) {
           return { error: err as string };
         }
       },
-      invalidatesTags: ["Group", "Entity", "Object"],
+      invalidatesTags: ["Object", "Entity"],
     }),
   }),
 });

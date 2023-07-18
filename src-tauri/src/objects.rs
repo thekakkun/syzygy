@@ -45,12 +45,12 @@ pub fn get_objects(sys_state: State<Drawing>, canvas_state: State<Canvas>) -> Ve
 //   (Segments aren't added to the path after creation)
 // - If there's a circle in the group, that's the only object.
 #[tauri::command]
-pub fn get_object(group: Group, sys_state: State<Drawing>) -> Vec<Segment> {
+pub fn get_object(handle: Group, sys_state: State<Drawing>) -> Vec<Segment> {
     let sys = sys_state.0.lock().unwrap();
 
     let mut point_to_entity = HashMap::new();
     let mut other_entity_point = HashMap::new();
-    for handle in sys.entity_handles(Some(&group), None) {
+    for handle in sys.entity_handles(Some(&handle), None) {
         if let Some(circle_segment) = match handle {
             SomeEntityHandle::ArcOfCircle(_) => {
                 let arc_data = sys
@@ -105,7 +105,7 @@ pub fn get_object(group: Group, sys_state: State<Drawing>) -> Vec<Segment> {
     }
 
     let mut point_to_point = HashMap::new();
-    sys.constraint_handles(Some(&group), None)
+    sys.constraint_handles(Some(&handle), None)
         .iter()
         .filter_map(|&handle| match handle {
             SomeConstraintHandle::PointsCoincident(_) => Some(
@@ -122,7 +122,7 @@ pub fn get_object(group: Group, sys_state: State<Drawing>) -> Vec<Segment> {
     let mut object = Vec::new();
 
     let mut next_point = sys
-        .entity_handles(Some(&group), None)
+        .entity_handles(Some(&handle), None)
         .iter()
         .find_map(|handle| {
             if let Ok(point_handle) = EntityHandle::<Point>::try_from(*handle) {

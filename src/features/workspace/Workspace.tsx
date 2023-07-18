@@ -1,4 +1,3 @@
-import { useGetEntitiesQuery } from "../../app/slvs/slvsEntitiesSlice";
 import { useAppDispatch } from "../../app/store";
 import { setCoord } from "../cursor/cursorSlice";
 import style from "./Workspace.module.css";
@@ -6,9 +5,6 @@ import EntityPath from "./Entity";
 
 export default function Workspace() {
   const dispatch = useAppDispatch();
-  const { data: entities } = useGetEntitiesQuery();
-  
-
 
   return (
     <div className={style.workspace}>
@@ -20,7 +16,7 @@ export default function Workspace() {
           dispatch(setCoord([e.nativeEvent.offsetX, e.nativeEvent.offsetY]))
         }
       >
-        {entities &&
+        {/* {entities &&
           Object.entries(entities).map(([handle, entityData]) => {
             return (
               <EntityPath
@@ -29,7 +25,7 @@ export default function Workspace() {
                 entityData={entityData}
               ></EntityPath>
             );
-          })}
+          })} */}
       </svg>
     </div>
   );

@@ -2,6 +2,8 @@ import { invoke } from "@tauri-apps/api";
 import { EntityHandle } from "./slvsEntitiesSlice";
 import { slvsSlice } from "./slvsSlice";
 
+export type ObjectHandle = number;
+
 type Object = Segment[];
 
 export interface Segment {
@@ -9,15 +11,13 @@ export interface Segment {
   via: Via;
 }
 
-// type Via = "Close" | "End" | "Move" | { Through: EntityHandle };
-
 type Via = { type: "Close" | "End" | "Move" } | EntityHandle;
 
 export const slvsObjectsSlice = slvsSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getObjects: builder.query<number[], void>({
+    getObjects: builder.query<ObjectHandle[], void>({
       queryFn: async () => {
-        let objects: number[] = await invoke("get_objects");
+        let objects: ObjectHandle[] = await invoke("get_objects");
         console.log(objects);
         return {
           data: objects,
@@ -25,10 +25,10 @@ export const slvsObjectsSlice = slvsSlice.injectEndpoints({
       },
       providesTags: ["Object"],
     }),
-    getObject: builder.query<Object, number>({
+    getObject: builder.query<Object, ObjectHandle>({
       queryFn: async (handle) => {
         try {
-          let object: Object = await invoke("get_object", { group: handle });
+          let object: Object = await invoke("get_object", { handle });
           console.log(object);
           return { data: object };
         } catch (err) {

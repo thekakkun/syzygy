@@ -8,11 +8,14 @@ export default function Entity({ segment }: { segment: Segment }) {
   const selection = useAppSelector((state) => state.selection);
   const dispatch = useAppDispatch();
 
-  return "handle" in segment.via ? (
+  if (!("handle" in segment.via)) {
+    return null;
+  }
+
+  return (
     <li
       className={
-        selection.type === "entity" &&
-        selection.handles.includes(segment.via.handle)
+        selection.type === "entity" && selection.handles.includes(segment.via)
           ? style.selected
           : ""
       }
@@ -21,12 +24,10 @@ export default function Entity({ segment }: { segment: Segment }) {
         dispatch(
           toggleSelection({
             type: "entity",
-            handle: (segment.via as EntityHandle).handle,
+            handle: segment.via as EntityHandle,
           })
         );
       }}
     >{`${segment.via.type} ${segment.via.handle}`}</li>
-  ) : (
-    <></>
   );
 }

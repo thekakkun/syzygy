@@ -1,122 +1,43 @@
 import {
-  EntityData,
-  useGetEntitiesQuery,
+  EntityHandle,
+  useGetEntityQuery,
 } from "../../app/slvs/slvsEntitiesSlice";
-import { arcAngle, arcRadius } from "../../common/utils/geometry";
+import ArcOfCircle from "./entity/ArcOfCircle";
+import Circle from "./entity/Circle";
+import Cubic from "./entity/Cubic";
+import LineSegment from "./entity/LineSegment";
+import Point from "./entity/Point";
 
-export default function Entity({ handles }: { handles: number[] }) {
+export default function Entity({ handles }: { handles: EntityHandle[] }) {
   switch (handles.length) {
     case 0:
       return <p>Nothing selected</p>;
     case 1:
       const handle = handles[0];
-      const { entityData } = useGetEntitiesQuery(undefined, {
-        selectFromResult: ({ data }) => ({
-          entityData: data?.[handle],
-        }),
-      });
+      const { data: entityData } = useGetEntityQuery(handle);
 
       return (
         <>
-          <p>
-            {entityData?.type} {handle}
-          </p>
-          {entityData && entityProperty(entityData)}
+          <p>{`${handle.type} ${handle.handle}`}</p>
+          {entityData &&
+            (entityData.type === "ArcOfCircle" ? (
+              <ArcOfCircle data={entityData}></ArcOfCircle>
+            ) : entityData.type === "Circle" ? (
+              <Circle data={entityData}></Circle>
+            ) : entityData.type === "Cubic" ? (
+              <Cubic data={entityData}></Cubic>
+            ) : entityData.type === "LineSegment" ? (
+              <LineSegment data={entityData}></LineSegment>
+            ) : entityData.type === "Point" ? (
+              <Point data={entityData}></Point>
+            ) : (
+              <></>
+            ))}
         </>
       );
     default:
-      return <p>Entities {handles.join(", ")}</p>;
-  }
-}
-
-function entityProperty(entityData: EntityData) {
-  switch (entityData.type) {
-    case "ArcOfCircle": {
-      let {
-        center: [centerX, centerY],
-      } = entityData;
-
       return (
-        <dl>
-          <dt>center:</dt>
-          <dd>{`(${centerX}, ${centerY})`}</dd>
-
-          <dt>radius:</dt>
-          <dd>{arcRadius(entityData).toFixed(2)}</dd>
-
-          <dt>angle:</dt>
-          <dd>{arcAngle(entityData).toFixed(2)}</dd>
-        </dl>
+        <p>Entities {handles.map((handle) => handle.handle).join(", ")}</p>
       );
-    }
-
-    case "Circle": {
-      let {
-        center: [centerX, centerY],
-        radius,
-      } = entityData;
-
-      return (
-        <dl>
-          <dt>center:</dt>
-          <dd>{`(${centerX}, ${centerY})`}</dd>
-
-          <dt>radius:</dt>
-          <dd>{radius.toFixed(2)}</dd>
-        </dl>
-      );
-    }
-
-    case "Cubic": {
-      let {
-        start_point: [startX, startY],
-        start_control: [startControlX, startControlY],
-        end_control: [endControlX, endControlY],
-        end_point: [endX, endY],
-      } = entityData;
-
-      return (
-        <dl>
-          <dt>start point:</dt>
-          <dd>{`(${startX}, ${startY})`}</dd>
-
-          <dt>start control:</dt>
-          <dd>{`(${startControlX}, ${startControlY})`}</dd>
-
-          <dt>end point:</dt>
-          <dd>{`(${endX}, ${endY})`}</dd>
-
-          <dt>end control:</dt>
-          <dd>{`(${endControlX}, ${endControlY})`}</dd>
-        </dl>
-      );
-    }
-
-    case "LineSegment": {
-      let {
-        point_a: [pointAX, pointAY],
-        point_b: [pointBX, pointBY],
-      } = entityData;
-
-      return (
-        <dl>
-          <dt>point A:</dt>
-          <dd>{`(${pointAX}, ${pointAY})`}</dd>
-
-          <dt>point B:</dt>
-          <dd>{`(${pointBX}, ${pointBY})`}</dd>
-        </dl>
-      );
-    }
-    case "Point": {
-      let [x, y] = entityData.coords;
-
-      return (
-        <dl>
-          <dt>coordinates:</dt>
-          <dd>{`(${x}, ${y})`}</dd>
-        </dl>
-      );
-    }
   }
 }

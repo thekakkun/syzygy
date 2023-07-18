@@ -1,53 +1,61 @@
 import { invoke } from "@tauri-apps/api";
 import { Coords } from "../../common/types";
+import { ObjectHandle } from "./slvsObjectsSlice";
 import { slvsSlice } from "./slvsSlice";
 
 export interface Entities {
   [handle: number]: EntityData;
 }
+
 // This corresponds to SomeEntityHandle
 export interface EntityHandle {
   handle: number;
   type: EntityType;
 }
-export type EntityData =
-  | ArcData
-  | CircleData
-  | CubicData
-  | LineData
-  | PointData;
+export interface PointHandle extends EntityHandle {
+  type: "Point";
+}
+
 export type EntityType =
   | "ArcOfCircle"
   | "Circle"
   | "Cubic"
   | "LineSegment"
   | "Point";
-interface BaseEntityData {
+
+export type EntityData =
+  | ArcOfCircleData
+  | CircleData
+  | CubicData
+  | LineSegmentData
+  | PointData;
+
+export interface BaseEntityData {
   type: EntityType;
-  group: number;
+  group: ObjectHandle;
 }
-export interface ArcData extends BaseEntityData {
+export interface ArcOfCircleData extends BaseEntityData {
   type: "ArcOfCircle";
-  center: Coords;
-  start: Coords;
-  end: Coords;
+  center: PointHandle;
+  start: PointHandle;
+  end: PointHandle;
 }
 export interface CircleData extends BaseEntityData {
   type: "Circle";
-  center: Coords;
+  center: PointHandle;
   radius: number;
 }
 export interface CubicData extends BaseEntityData {
   type: "Cubic";
-  start_point: Coords;
-  start_control: Coords;
-  end_control: Coords;
-  end_point: Coords;
+  start_point: PointHandle;
+  start_control: PointHandle;
+  end_control: PointHandle;
+  end_point: PointHandle;
 }
-export interface LineData extends BaseEntityData {
+export interface LineSegmentData extends BaseEntityData {
   type: "LineSegment";
-  point_a: Coords;
-  point_b: Coords;
+  point_a: PointHandle;
+  point_b: PointHandle;
 }
 export interface PointData extends BaseEntityData {
   type: "Point";
@@ -56,14 +64,14 @@ export interface PointData extends BaseEntityData {
 
 export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getEntities: builder.query<Entities, void>({
-      queryFn: async () => {
-        let entities: Entities = await invoke("get_entities");
-        console.log(entities);
-        return { data: entities };
-      },
-      providesTags: ["Entity"],
-    }),
+    // getEntities: builder.query<Entities, void>({
+    //   queryFn: async () => {
+    //     let entities: Entities = await invoke("get_entities");
+    //     console.log(entities);
+    //     return { data: entities };
+    //   },
+    //   providesTags: ["Entity"],
+    // }),
     getEntity: builder.query<EntityData, EntityHandle>({
       queryFn: async (entityHandle) => {
         try {
@@ -77,21 +85,32 @@ export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
         }
       },
     }),
-    addEntity: builder.mutation<EntityHandle, EntityData>({
-      queryFn: async (entityData) => {
+    getCoords: builder.query<Coords, PointHandle>({
+      queryFn: async (handle) => {
         try {
-          let entityHandle: EntityHandle = await invoke("add_entity", {
-            data: entityData,
-          });
-          return { data: entityHandle };
+          let coords: Coords = await invoke("coords", { handle });
+          return { data: coords };
         } catch (err) {
-          console.log(err);
+          console.log(`error getting point ${handle}`);
           return { error: err as string };
         }
       },
-      invalidatesTags: ["Entity"],
     }),
+    // addEntity: builder.mutation<EntityHandle, EntityData>({
+    //   queryFn: async (entityData) => {
+    //     try {
+    //       let entityHandle: EntityHandle = await invoke("add_entity", {
+    //         data: entityData,
+    //       });
+    //       return { data: entityHandle };
+    //     } catch (err) {
+    //       console.log(err);
+    //       return { error: err as string };
+    //     }
+    //   },
+    //   invalidatesTags: ["Entity"],
+    // }),
   }),
 });
 
-export const { useGetEntitiesQuery, useAddEntityMutation } = slvsEntitiesSlice;
+export const { useGetEntityQuery, useGetCoordsQuery } = slvsEntitiesSlice;
