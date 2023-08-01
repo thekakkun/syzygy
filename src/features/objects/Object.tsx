@@ -1,12 +1,10 @@
-import { useEffect } from "react";
-import { EntityHandle } from "../../app/slvs/slvsEntitiesSlice";
 import { useGetObjectQuery } from "../../app/slvs/slvsObjectsSlice";
 import { useAppDispatch, useAppSelector } from "../../app/store";
 import { toggleSelection } from "../cursor/selectionSlice";
 import Entity from "./Entity";
 import style from "./Object.module.css";
 
-export default function Object({ handle }: { handle: number }) {
+export default function SlvsObject({ handle }: { handle: number }) {
   const selection = useAppSelector((state) => state.selection);
   const dispatch = useAppDispatch();
 

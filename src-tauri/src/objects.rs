@@ -13,16 +13,35 @@ use crate::{Canvas, Drawing};
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum Via {
+    Move,
+    Draw(SomeEntityHandle),
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum To {
     Close,
     End,
-    Move,
-    Through(SomeEntityHandle),
+    Move {
+        point: SomeEntityHandle,
+    },
+    Draw {
+        point: SomeEntityHandle,
+        via: SomeEntityHandle,
+    },
+    // Point(SomeEntityHandle),
 }
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub struct Segment {
     from: SomeEntityHandle,
-    via: Via,
+    to: To,
+}
+
+pub enum Object {
+    Path(Vec<Segment>),
+    Shape(Vec<Segment>),
+    Circle,
 }
 
 #[tauri::command]
@@ -71,7 +90,8 @@ pub fn get_object(handle: Group, sys_state: State<Drawing>) -> Vec<Segment> {
 
                 Some(vec![Segment {
                     from: circle_data.center.into(),
-                    via: Via::Through(handle),
+                    via: Via::Draw(handle),
+                    to: To::Close,
                 }])
             }
             SomeEntityHandle::Cubic(_) => {
@@ -138,12 +158,15 @@ pub fn get_object(handle: Group, sys_state: State<Drawing>) -> Vec<Segment> {
 
     while let Some(segment_start) = next_point {
         if let Some(&entity) = point_to_entity.get(&segment_start) {
+            let segment_end = other_entity_point.get(&(entity, segment_start)).unwrap();
+
             object.push(Segment {
                 from: segment_start.into(),
-                via: Via::Through(entity),
+                to: To::Draw {
+                    point: (*segment_end).into(),
+                    via: entity,
+                },
             });
-
-            let segment_end = other_entity_point.get(&(entity, segment_start)).unwrap();
 
             match point_to_point.get(segment_end) {
                 // End of segment is coincident to a point that is...
@@ -152,10 +175,10 @@ pub fn get_object(handle: Group, sys_state: State<Drawing>) -> Vec<Segment> {
                     if object.iter().any(|segment| segment.from == (*point).into()) {
                         object.push(Segment {
                             from: (*segment_end).into(),
-                            via: Via::Close,
+                            to: To::Close,
                         });
                         break;
-                        // A new point (continue down path)
+                    // A new point (continue down path)
                     } else {
                         next_point = Some(*point)
                     }
@@ -164,7 +187,7 @@ pub fn get_object(handle: Group, sys_state: State<Drawing>) -> Vec<Segment> {
                 None => {
                     object.push(Segment {
                         from: (*segment_end).into(),
-                        via: Via::End,
+                        to: To::End,
                     });
                     break;
                 }

@@ -1,6 +1,6 @@
 import { useAppSelector } from "../../app/store";
 import Entity from "./Entity";
-import Object from "./Object";
+import SlvsObject from "./Object";
 import style from "./Properties.module.css";
 
 export default function Properties() {
@@ -9,7 +9,7 @@ export default function Properties() {
   return (
     <div className={style.properties}>
       {selection.type === "object" ? (
-        <Object handles={selection.handles}></Object>
+        <SlvsObject handles={selection.handles}></SlvsObject>
       ) : selection.type === "entity" ? (
         <Entity handles={selection.handles}></Entity>
       ) : (

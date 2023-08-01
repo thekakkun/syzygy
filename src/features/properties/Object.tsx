@@ -1,6 +1,6 @@
 import { useGetObjectQuery } from "../../app/slvs/slvsObjectsSlice";
 
-export default function Object({ handles }: { handles: number[] }) {
+export default function SlvsObject({ handles }: { handles: number[] }) {
   switch (handles.length) {
     case 0:
       return <p>Nothing selected</p>;

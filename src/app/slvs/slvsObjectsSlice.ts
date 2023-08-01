@@ -3,8 +3,7 @@ import { EntityHandle } from "./slvsEntitiesSlice";
 import { slvsSlice } from "./slvsSlice";
 
 export type ObjectHandle = number;
-
-type Object = Segment[];
+export type SlvsObject = Segment[];
 
 export interface Segment {
   from: EntityHandle & { type: "Point" };
@@ -25,10 +24,10 @@ export const slvsObjectsSlice = slvsSlice.injectEndpoints({
       },
       providesTags: ["Object"],
     }),
-    getObject: builder.query<Object, ObjectHandle>({
+    getObject: builder.query<SlvsObject, ObjectHandle>({
       queryFn: async (handle) => {
         try {
-          let object: Object = await invoke("get_object", { handle });
+          let object: SlvsObject = await invoke("get_object", { handle });
           console.log(object);
           return { data: object };
         } catch (err) {

@@ -6,10 +6,7 @@ import { useArcOfCircle } from "../../../common/hooks/useArcOfCircle";
 
 export default function ArcOfCircle({ data }: { data: ArcOfCircleData }) {
   const { data: center } = useGetCoordsQuery(data.center);
-  const { data: start } = useGetCoordsQuery(data.start);
-  const { data: end } = useGetCoordsQuery(data.end);
-
-  const { radius, angle } = useArcOfCircle(center, start, end);
+  const { radius, angle } = useArcOfCircle(data);
 
   return (
     <dl>
