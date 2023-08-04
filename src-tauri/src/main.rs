@@ -219,7 +219,7 @@ fn main() {
             groups::delete_group,
             // entities::get_entities,
             entities::get_entity,
-            entities::coords,
+            // entities::point,
             // entities::add_entity,
             objects::get_objects,
             objects::get_object,

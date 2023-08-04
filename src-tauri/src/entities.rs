@@ -1,33 +1,33 @@
 use crate::Drawing;
-
 use serde::{Deserialize, Serialize};
 use slvs::{
-    entity::{ArcOfCircle, Circle, Cubic, EntityHandle, LineSegment, Point, SomeEntityHandle},
+    entity::{
+        ArcOfCircle, Circle, Cubic, EntityHandle, LineSegment, Point as SlvsPoint, SomeEntityHandle,
+    },
     group::Group,
 };
 use tauri::State;
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-pub struct Coords([f64; 2]);
-
-impl From<[f64; 2]> for Coords {
-    fn from(value: [f64; 2]) -> Self {
-        Self(value)
-    }
+pub struct Point {
+    pub handle: SomeEntityHandle,
+    pub group: Group,
+    pub coords: [f64; 2],
 }
 
-impl From<Point> for Coords {
-    fn from(value: Point) -> Self {
-        match value {
-            Point::OnWorkplane { coords, .. } => Self(coords),
-            Point::In3d { coords, .. } => Self([coords[0], coords[1]]),
+impl Point {
+    pub fn from_slvs(
+        handle: &EntityHandle<SlvsPoint>,
+        data: &SlvsPoint,
+    ) -> Result<Self, &'static str> {
+        match data {
+            SlvsPoint::OnWorkplane { group, coords, .. } => Ok(Self {
+                handle: (*handle).into(),
+                group: *group,
+                coords: *coords,
+            }),
+            SlvsPoint::In3d { .. } => Err("Expected data for 2d point"),
         }
-    }
-}
-
-impl From<Coords> for [f64; 2] {
-    fn from(value: Coords) -> Self {
-        value.0
     }
 }
 
@@ -35,32 +35,33 @@ impl From<Coords> for [f64; 2] {
 #[serde(tag = "type")]
 pub enum EntityData {
     ArcOfCircle {
+        handle: SomeEntityHandle,
         group: Group,
-        center: SomeEntityHandle,
-        start: SomeEntityHandle,
-        end: SomeEntityHandle,
+        center: Point,
+        start: Point,
+        end: Point,
     },
     Circle {
+        handle: SomeEntityHandle,
         group: Group,
-        center: SomeEntityHandle,
+        center: Point,
         radius: f64,
     },
     Cubic {
+        handle: SomeEntityHandle,
         group: Group,
-        start_point: SomeEntityHandle,
-        start_control: SomeEntityHandle,
-        end_control: SomeEntityHandle,
-        end_point: SomeEntityHandle,
+        start_point: Point,
+        start_control: Point,
+        end_control: Point,
+        end_point: Point,
     },
     LineSegment {
+        handle: SomeEntityHandle,
         group: Group,
-        point_a: SomeEntityHandle,
-        point_b: SomeEntityHandle,
+        point_a: Point,
+        point_b: Point,
     },
-    Point {
-        group: Group,
-        coords: Coords,
-    },
+    Point(Point),
 }
 
 #[tauri::command]
@@ -75,57 +76,73 @@ pub fn get_entity(
             let handle: EntityHandle<ArcOfCircle> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
+            let center = Point::from_slvs(&data.center, &sys.entity_data(&data.center)?)?;
+            let start = Point::from_slvs(&data.arc_start, &sys.entity_data(&data.arc_start)?)?;
+            let end = Point::from_slvs(&data.arc_end, &sys.entity_data(&data.arc_end)?)?;
+
             Ok(EntityData::ArcOfCircle {
+                handle: handle.into(),
                 group: data.group,
-                center: data.center.into(),
-                start: data.arc_start.into(),
-                end: data.arc_end.into(),
+                center,
+                start,
+                end,
             })
         }
         SomeEntityHandle::Circle(_) => {
             let handle: EntityHandle<Circle> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
+            let center = Point::from_slvs(&data.center, &sys.entity_data(&data.center)?)?;
+            let radius = sys.entity_data(&data.radius)?.val;
+
             Ok(EntityData::Circle {
+                handle: handle.into(),
                 group: data.group,
-                center: data.center.into(),
-                radius: sys.entity_data(&data.radius)?.val,
+                center,
+                radius,
             })
         }
         SomeEntityHandle::Cubic(_) => {
             let handle: EntityHandle<Cubic> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
+            let start_point =
+                Point::from_slvs(&data.start_point, &sys.entity_data(&data.start_point)?)?;
+            let start_control =
+                Point::from_slvs(&data.start_control, &sys.entity_data(&data.start_control)?)?;
+            let end_control =
+                Point::from_slvs(&data.end_control, &sys.entity_data(&data.end_control)?)?;
+            let end_point = Point::from_slvs(&data.end_point, &sys.entity_data(&data.end_point)?)?;
+
             Ok(EntityData::Cubic {
+                handle: handle.into(),
                 group: data.group,
-                start_point: data.start_point.into(),
-                start_control: data.start_control.into(),
-                end_control: data.end_control.into(),
-                end_point: data.end_point.into(),
+                start_point,
+                start_control,
+                end_control,
+                end_point,
             })
         }
         SomeEntityHandle::LineSegment(_) => {
             let handle: EntityHandle<LineSegment> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
+            let point_a = Point::from_slvs(&data.point_a, &sys.entity_data(&data.point_a)?)?;
+            let point_b = Point::from_slvs(&data.point_b, &sys.entity_data(&data.point_b)?)?;
+
             Ok(EntityData::LineSegment {
+                handle: handle.into(),
                 group: data.group,
-                point_a: data.point_a.into(),
-                point_b: data.point_b.into(),
+                point_a,
+                point_b,
             })
         }
         SomeEntityHandle::Point(_) => {
-            let handle: EntityHandle<Point> = handle.try_into().unwrap();
-            let data = sys.entity_data(&handle)?;
-
-            if let Point::OnWorkplane { coords, group, .. } = data {
-                Ok(EntityData::Point {
-                    group,
-                    coords: coords.into(),
-                })
-            } else {
-                Err("Handle exists, but doesn't correspond to Syzygy entity.")
-            }
+            let point = Point::from_slvs(
+                &handle.try_into().unwrap(),
+                &sys.entity_data(&handle.try_into().unwrap())?,
+            )?;
+            Ok(EntityData::Point(point))
         }
         SomeEntityHandle::Distance(_)
         | SomeEntityHandle::Normal(_)
@@ -135,15 +152,35 @@ pub fn get_entity(
     }
 }
 
-#[tauri::command]
-pub fn coords(handle: SomeEntityHandle, sys_state: State<Drawing>) -> Result<Coords, &'static str> {
-    let sys = sys_state.0.lock().unwrap();
+// #[tauri::command]
+// pub fn point(handle: SomeEntityHandle, sys_state: State<Drawing>) -> Result<Point, &'static str> {
+//     if let Ok(point_handle) = EntityHandle::<SlvsPoint>::try_from(handle) {
+//         let sys = sys_state.0.lock().unwrap();
 
-    let point_handle: EntityHandle<Point> = handle.try_into()?;
-    let point_data = sys.entity_data(&point_handle)?;
+//         let point = sys.entity_data(&point_handle)?;
 
-    Ok(point_data.into())
-}
+//         match point {
+//             SlvsPoint::OnWorkplane { group, coords, .. } => Ok(Point {
+//                 handle,
+//                 group,
+//                 coords,
+//             }),
+//             SlvsPoint::In3d { .. } => Err("Expected handle for 2d point"),
+//         }
+//     } else {
+//         Err("Expected handle for a point")
+//     }
+// }
+
+// #[tauri::command]
+// pub fn coords(handle: SomeEntityHandle, sys_state: State<Drawing>) -> Result<Coords, &'static str> {
+//     let sys = sys_state.0.lock().unwrap();
+
+//     let point_handle: EntityHandle<SlvsPoint> = handle.try_into()?;
+//     let point_data = sys.entity_data(&point_handle)?;
+
+//     Ok(point_data.into())
+// }
 
 // #[tauri::command]
 // pub fn get_entities(sys_state: State<Drawing>) -> HashMap<u32, EntityData> {

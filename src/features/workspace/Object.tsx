@@ -10,9 +10,9 @@ export default function SlvsObject({
   objectHandle: ObjectHandle;
 }) {
   let { data: segments } = useGetObjectQuery(objectHandle);
-  let pathData = usePathData(segments);
+  // let pathData = usePathData(segments);
 
-  console.log(pathData);
+  // console.log(pathData);
 
   return (
     <path
