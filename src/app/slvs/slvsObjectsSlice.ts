@@ -1,22 +1,13 @@
 import { invoke } from "@tauri-apps/api";
-import { EntityHandle } from "./slvsEntitiesSlice";
+
 import { slvsSlice } from "./slvsSlice";
-
-export type ObjectHandle = number;
-export type SlvsObject = Segment[];
-
-export interface Segment {
-  from: EntityHandle & { type: "Point" };
-  via: Via;
-}
-
-type Via = { type: "Close" | "End" | "Move" } | EntityHandle;
+import { SyzygyObject, ObjectHandle } from "../../common/types";
 
 export const slvsObjectsSlice = slvsSlice.injectEndpoints({
   endpoints: (builder) => ({
     getObjects: builder.query<ObjectHandle[], void>({
       queryFn: async () => {
-        let objects: ObjectHandle[] = await invoke("get_objects");
+        let objects: ObjectHandle[] = await invoke("objects");
         console.log(objects);
         return {
           data: objects,
@@ -24,10 +15,10 @@ export const slvsObjectsSlice = slvsSlice.injectEndpoints({
       },
       providesTags: ["Object"],
     }),
-    getObject: builder.query<SlvsObject, ObjectHandle>({
+    getObject: builder.query<SyzygyObject, ObjectHandle>({
       queryFn: async (handle) => {
         try {
-          let object: SlvsObject = await invoke("get_object", { handle });
+          let object: SyzygyObject = await invoke("object", { handle });
           console.log(object);
           return { data: object };
         } catch (err) {

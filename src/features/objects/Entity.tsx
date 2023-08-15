@@ -1,21 +1,16 @@
-import { EntityHandle } from "../../app/slvs/slvsEntitiesSlice";
-import { Segment } from "../../app/slvs/slvsObjectsSlice";
 import { useAppDispatch, useAppSelector } from "../../app/store";
+import { EntityHandle } from "../../common/types";
 import { toggleSelection } from "../cursor/selectionSlice";
 import style from "./Entity.module.css";
 
-export default function Entity({ segment }: { segment: Segment }) {
+export default function Entity({ handle }: { handle: EntityHandle }) {
   const selection = useAppSelector((state) => state.selection);
   const dispatch = useAppDispatch();
-
-  if (!("handle" in segment.via)) {
-    return null;
-  }
 
   return (
     <li
       className={
-        selection.type === "entity" && selection.handles.includes(segment.via)
+        selection.type === "entity" && selection.handles.includes(handle)
           ? style.selected
           : ""
       }
@@ -24,10 +19,10 @@ export default function Entity({ segment }: { segment: Segment }) {
         dispatch(
           toggleSelection({
             type: "entity",
-            handle: segment.via as EntityHandle,
+            handle: handle,
           })
         );
       }}
-    >{`${segment.via.type} ${segment.via.handle}`}</li>
+    >{`${handle.type} ${handle.handle}`}</li>
   );
 }
