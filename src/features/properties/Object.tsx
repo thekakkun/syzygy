@@ -1,6 +1,6 @@
 import { useGetObjectQuery } from "../../app/slvs/slvsObjectsSlice";
 
-export default function SlvsObject({ handles }: { handles: number[] }) {
+export default function Object({ handles }: { handles: number[] }) {
   switch (handles.length) {
     case 0:
       return <p>Nothing selected</p>;
@@ -12,18 +12,10 @@ export default function SlvsObject({ handles }: { handles: number[] }) {
         return <p>Object not found</p>;
       }
 
-      const lastSegmentType = object[object?.length - 1].via.type;
       return (
         <>
           <p>Thingy {handle}</p>
-          <p>
-            Type:{" "}
-            {lastSegmentType === "Circle"
-              ? "circle"
-              : lastSegmentType === "Close"
-              ? "shape"
-              : "path"}
-          </p>
+          <p>Type: {object.type}</p>
         </>
       );
     default:

@@ -1,35 +1,16 @@
-import {
-  ArcOfCircleData,
-  useGetCoordsQuery,
-} from "../../../app/slvs/slvsEntitiesSlice";
-import { useArcOfCircle } from "../../../common/hooks/useArcOfCircle";
+import { ArcEntity } from "../../../common/types";
 
-export default function ArcOfCircle({ data }: { data: ArcOfCircleData }) {
-  const { data: center } = useGetCoordsQuery(data.center);
-  const { radius, angle } = useArcOfCircle(data);
-
+export default function ArcOfCircle({ data }: { data: ArcEntity }) {
   return (
     <dl>
-      {center && (
-        <>
-          <dt>center:</dt>
-          <dd>{`(${center[0]}, ${center[1]})`}</dd>
-        </>
-      )}
+      <dt>center:</dt>
+      <dd>{`(${data.center.coords[0]}, ${data.center.coords[1]})`}</dd>
 
-      {radius && (
-        <>
-          <dt>radius:</dt>
-          <dd>{radius.toFixed(2)}</dd>
-        </>
-      )}
+      <dt>radius:</dt>
+      <dd>{data.radius.toFixed(2)}</dd>
 
-      {angle && (
-        <>
-          <dt>angle:</dt>
-          <dd>{angle.toFixed(2)}</dd>
-        </>
-      )}
+      <dt>angle:</dt>
+      <dd>{data.angle.toFixed(2)}</dd>
     </dl>
   );
 }

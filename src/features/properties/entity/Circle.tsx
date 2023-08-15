@@ -1,19 +1,10 @@
-import {
-  CircleData,
-  useGetCoordsQuery,
-} from "../../../app/slvs/slvsEntitiesSlice";
+import { CircleEntity } from "../../../common/types";
 
-export default function Circle({ data }: { data: CircleData }) {
-  const { data: center } = useGetCoordsQuery(data.center);
-
+export default function Circle({ data }: { data: CircleEntity }) {
   return (
     <dl>
-      {center && (
-        <>
-          <dt>center:</dt>
-          <dd>{`(${center[0]}, ${center[1]})`}</dd>
-        </>
-      )}
+      <dt>center:</dt>
+      <dd>{`(${data.center.coords[0]}, ${data.center.coords[1]})`}</dd>
 
       <dt>radius:</dt>
       <dd>{data.radius.toFixed(2)}</dd>

@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use slvs::{
     entity::{ArcOfCircle, Circle, Cubic, EntityHandle, LineSegment, Point, SomeEntityHandle},
     group::Group,
+    utils::{angle_2d, distance},
     System,
 };
 use std::sync::MutexGuard;
@@ -24,12 +25,17 @@ pub fn entity(
             let start = PointData::from_sys(&sys, &data.arc_start)?;
             let end = PointData::from_sys(&sys, &data.arc_end)?;
 
+            let radius = distance(center.coords, start.coords);
+            let angle = angle_2d([center.coords, start.coords], [center.coords, end.coords]);
+
             Ok(EntityData::ArcOfCircle(ArcOfCircleData {
                 handle: handle.into(),
                 group: data.group,
                 center,
                 start,
                 end,
+                radius,
+                angle,
             }))
         }
         SomeEntityHandle::Circle(_) => {
@@ -107,6 +113,8 @@ pub struct ArcOfCircleData {
     center: PointData,
     start: PointData,
     end: PointData,
+    radius: f64,
+    angle: f64,
 }
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]

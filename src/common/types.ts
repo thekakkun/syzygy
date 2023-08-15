@@ -13,37 +13,39 @@ export type EntityType =
   | "Cubic"
   | "LineSegment"
   | "Point";
-export type Entity = ArcOfCircle | Circle | Cubic | LineSegment | Point;
+export type Entity = ArcEntity | CircleEntity | CubicEntity | LineEntity | PointEntity;
 
 export interface BaseEntityData {
   type: EntityType;
   handle: EntityHandle;
   group: ObjectHandle;
 }
-export interface ArcOfCircle extends BaseEntityData {
+export interface ArcEntity extends BaseEntityData {
   type: "ArcOfCircle";
   center: PointData;
   start: PointData;
   end: PointData;
+  radius: number;
+  angle: number;
 }
-export interface Circle extends BaseEntityData {
+export interface CircleEntity extends BaseEntityData {
   type: "Circle";
   center: PointData;
   radius: number;
 }
-export interface Cubic extends BaseEntityData {
+export interface CubicEntity extends BaseEntityData {
   type: "Cubic";
   start_point: PointData;
   start_control: PointData;
   end_control: PointData;
   end_point: PointData;
 }
-export interface LineSegment extends BaseEntityData {
+export interface LineEntity extends BaseEntityData {
   type: "LineSegment";
   point_a: PointData;
   point_b: PointData;
 }
-export interface Point extends BaseEntityData, PointData {
+export interface PointEntity extends BaseEntityData, PointData {
   type: "Point";
 }
 export interface PointData {

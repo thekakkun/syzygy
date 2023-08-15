@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 //   useGetCoordsQuery,
 // } from "../../app/slvs/slvsEntitiesSlice";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
-import { ArcOfCircle } from "../types";
+import { ArcEntity } from "../types";
 
-export function useArcOfCircle(arcData?: ArcOfCircle) {
+export function useArcOfCircle(arcData?: ArcEntity) {
   // const { data: center } = useGetCoordsQuery(
   //   arcData ? arcData.center : skipToken
   // );

@@ -1,7 +1,5 @@
-import {
-  EntityHandle,
-  useGetEntityQuery,
-} from "../../app/slvs/slvsEntitiesSlice";
+import { useGetEntityQuery } from "../../app/slvs/slvsEntitiesSlice";
+import { EntityHandle } from "../../common/types";
 import ArcOfCircle from "./entity/ArcOfCircle";
 import Circle from "./entity/Circle";
 import Cubic from "./entity/Cubic";
