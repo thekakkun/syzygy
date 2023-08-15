@@ -1,71 +1,15 @@
 use crate::Drawing;
 use serde::{Deserialize, Serialize};
 use slvs::{
-    entity::{
-        ArcOfCircle, Circle, Cubic, EntityHandle, LineSegment, Point as SlvsPoint, SomeEntityHandle,
-    },
+    entity::{ArcOfCircle, Circle, Cubic, EntityHandle, LineSegment, Point, SomeEntityHandle},
     group::Group,
+    System,
 };
+use std::sync::MutexGuard;
 use tauri::State;
 
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-pub struct Point {
-    pub handle: SomeEntityHandle,
-    pub group: Group,
-    pub coords: [f64; 2],
-}
-
-impl Point {
-    pub fn from_slvs(
-        handle: &EntityHandle<SlvsPoint>,
-        data: &SlvsPoint,
-    ) -> Result<Self, &'static str> {
-        match data {
-            SlvsPoint::OnWorkplane { group, coords, .. } => Ok(Self {
-                handle: (*handle).into(),
-                group: *group,
-                coords: *coords,
-            }),
-            SlvsPoint::In3d { .. } => Err("Expected data for 2d point"),
-        }
-    }
-}
-
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-#[serde(tag = "type")]
-pub enum EntityData {
-    ArcOfCircle {
-        handle: SomeEntityHandle,
-        group: Group,
-        center: Point,
-        start: Point,
-        end: Point,
-    },
-    Circle {
-        handle: SomeEntityHandle,
-        group: Group,
-        center: Point,
-        radius: f64,
-    },
-    Cubic {
-        handle: SomeEntityHandle,
-        group: Group,
-        start_point: Point,
-        start_control: Point,
-        end_control: Point,
-        end_point: Point,
-    },
-    LineSegment {
-        handle: SomeEntityHandle,
-        group: Group,
-        point_a: Point,
-        point_b: Point,
-    },
-    Point(Point),
-}
-
 #[tauri::command]
-pub fn get_entity(
+pub fn entity(
     handle: SomeEntityHandle,
     sys_state: State<Drawing>,
 ) -> Result<EntityData, &'static str> {
@@ -76,78 +20,140 @@ pub fn get_entity(
             let handle: EntityHandle<ArcOfCircle> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
-            let center = Point::from_slvs(&data.center, &sys.entity_data(&data.center)?)?;
-            let start = Point::from_slvs(&data.arc_start, &sys.entity_data(&data.arc_start)?)?;
-            let end = Point::from_slvs(&data.arc_end, &sys.entity_data(&data.arc_end)?)?;
+            let center = PointData::from_sys(&sys, &data.center)?;
+            let start = PointData::from_sys(&sys, &data.arc_start)?;
+            let end = PointData::from_sys(&sys, &data.arc_end)?;
 
-            Ok(EntityData::ArcOfCircle {
+            Ok(EntityData::ArcOfCircle(ArcOfCircleData {
                 handle: handle.into(),
                 group: data.group,
                 center,
                 start,
                 end,
-            })
+            }))
         }
         SomeEntityHandle::Circle(_) => {
             let handle: EntityHandle<Circle> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
-            let center = Point::from_slvs(&data.center, &sys.entity_data(&data.center)?)?;
+            let center = PointData::from_sys(&sys, &data.center)?;
             let radius = sys.entity_data(&data.radius)?.val;
 
-            Ok(EntityData::Circle {
+            Ok(EntityData::Circle(CircleData {
                 handle: handle.into(),
                 group: data.group,
                 center,
                 radius,
-            })
+            }))
         }
         SomeEntityHandle::Cubic(_) => {
             let handle: EntityHandle<Cubic> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
-            let start_point =
-                Point::from_slvs(&data.start_point, &sys.entity_data(&data.start_point)?)?;
-            let start_control =
-                Point::from_slvs(&data.start_control, &sys.entity_data(&data.start_control)?)?;
-            let end_control =
-                Point::from_slvs(&data.end_control, &sys.entity_data(&data.end_control)?)?;
-            let end_point = Point::from_slvs(&data.end_point, &sys.entity_data(&data.end_point)?)?;
+            let start_point = PointData::from_sys(&sys, &data.start_point)?;
+            let start_control = PointData::from_sys(&sys, &data.start_control)?;
+            let end_control = PointData::from_sys(&sys, &data.end_control)?;
+            let end_point = PointData::from_sys(&sys, &data.end_point)?;
 
-            Ok(EntityData::Cubic {
+            Ok(EntityData::Cubic(CubicData {
                 handle: handle.into(),
                 group: data.group,
                 start_point,
                 start_control,
                 end_control,
                 end_point,
-            })
+            }))
         }
         SomeEntityHandle::LineSegment(_) => {
             let handle: EntityHandle<LineSegment> = handle.try_into().unwrap();
             let data = sys.entity_data(&handle)?;
 
-            let point_a = Point::from_slvs(&data.point_a, &sys.entity_data(&data.point_a)?)?;
-            let point_b = Point::from_slvs(&data.point_b, &sys.entity_data(&data.point_b)?)?;
+            let point_a = PointData::from_sys(&sys, &data.point_a)?;
+            let point_b = PointData::from_sys(&sys, &data.point_b)?;
 
-            Ok(EntityData::LineSegment {
+            Ok(EntityData::LineSegment(LineSegmentData {
                 handle: handle.into(),
                 group: data.group,
                 point_a,
                 point_b,
-            })
+            }))
         }
         SomeEntityHandle::Point(_) => {
-            let point = Point::from_slvs(
-                &handle.try_into().unwrap(),
-                &sys.entity_data(&handle.try_into().unwrap())?,
-            )?;
+            let point = PointData::from_sys(&sys, &handle.try_into().unwrap())?;
             Ok(EntityData::Point(point))
         }
         SomeEntityHandle::Distance(_)
         | SomeEntityHandle::Normal(_)
         | SomeEntityHandle::Workplane(_) => {
             Err("Handle exists, but doesn't correspond to Syzygy entity.")
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum EntityData {
+    ArcOfCircle(ArcOfCircleData),
+    Circle(CircleData),
+    Cubic(CubicData),
+    LineSegment(LineSegmentData),
+    Point(PointData),
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+pub struct ArcOfCircleData {
+    handle: SomeEntityHandle,
+    group: Group,
+    center: PointData,
+    start: PointData,
+    end: PointData,
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+pub struct CircleData {
+    handle: SomeEntityHandle,
+    group: Group,
+    center: PointData,
+    radius: f64,
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+pub struct CubicData {
+    handle: SomeEntityHandle,
+    group: Group,
+    start_point: PointData,
+    start_control: PointData,
+    end_control: PointData,
+    end_point: PointData,
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+pub struct LineSegmentData {
+    handle: SomeEntityHandle,
+    group: Group,
+    point_a: PointData,
+    point_b: PointData,
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+pub struct PointData {
+    pub handle: SomeEntityHandle,
+    pub group: Group,
+    pub coords: [f64; 2],
+}
+
+impl PointData {
+    pub fn from_sys(
+        sys: &MutexGuard<'_, System>,
+        handle: &EntityHandle<Point>,
+    ) -> Result<Self, &'static str> {
+        match sys.entity_data(handle)? {
+            Point::OnWorkplane { group, coords, .. } => Ok(Self {
+                handle: (*handle).into(),
+                group,
+                coords,
+            }),
+            Point::In3d { .. } => Err("Expected data for 2d point"),
         }
     }
 }

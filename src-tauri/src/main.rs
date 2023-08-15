@@ -20,6 +20,7 @@ use std::sync::Mutex;
 use tauri::{Manager, State};
 
 pub struct Drawing(Mutex<System>);
+
 pub struct Canvas(EntityHandle<Workplane>);
 
 #[tauri::command]
@@ -217,12 +218,10 @@ fn main() {
             groups::get_group,
             groups::add_group,
             groups::delete_group,
-            // entities::get_entities,
-            entities::get_entity,
-            // entities::point,
-            // entities::add_entity,
-            objects::get_objects,
-            objects::get_object,
+            entities::entity,
+            objects::objects,
+            objects::object,
+            objects::path
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
