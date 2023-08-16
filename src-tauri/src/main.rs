@@ -131,21 +131,21 @@ fn main() {
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [100.0, 300.0],
+                    [100.0, 200.0],
                 ))
                 .expect("point in 2d created");
             let arc_start = sys
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [150.0, 300.0],
+                    [150.0, 200.0],
                 ))
                 .expect("point in 2d created");
             let arc_end = sys
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [100.0, 350.0],
+                    [100.0, 250.0],
                 ))
                 .expect("point in 2d created");
             sys.sketch(ArcOfCircle::new(
@@ -160,14 +160,14 @@ fn main() {
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [100.0, 350.0],
+                    [100.0, 250.0],
                 ))
                 .expect("point in 2d created");
             let pb = sys
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [250.0, 350.0],
+                    [250.0, 250.0],
                 ))
                 .expect("point in 2d created");
             sys.sketch(LineSegment::new(squiggle_group, pa, pb))
@@ -176,28 +176,28 @@ fn main() {
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [250.0, 350.0],
+                    [250.0, 250.0],
                 ))
                 .expect("point in 2d created");
             let p_sc = sys
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [300.0, 350.0],
+                    [300.0, 250.0],
                 ))
                 .expect("point in 2d created");
             let p_ec = sys
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [350.0, 300.0],
+                    [350.0, 200.0],
                 ))
                 .expect("point in 2d created");
             let p_e = sys
                 .sketch(Point::new_on_workplane(
                     squiggle_group,
                     canvas,
-                    [400.0, 300.0],
+                    [400.0, 200.0],
                 ))
                 .expect("point in 2d created");
             sys.sketch(Cubic::new(squiggle_group, p_s, p_sc, p_ec, p_e))

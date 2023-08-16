@@ -13,7 +13,12 @@ export type EntityType =
   | "Cubic"
   | "LineSegment"
   | "Point";
-export type Entity = ArcEntity | CircleEntity | CubicEntity | LineEntity | PointEntity;
+export type Entity =
+  | ArcEntity
+  | CircleEntity
+  | CubicEntity
+  | LineEntity
+  | PointEntity;
 
 export interface BaseEntityData {
   type: EntityType;
@@ -73,4 +78,19 @@ export interface Segment {
   from: PointData;
   via: EntityHandle;
   to: PointData;
+}
+
+// Path
+export type PathData = CirclePathData | PathPathData | ShapePathData;
+export interface CirclePathData {
+  type: "Circle";
+  data: CircleEntity;
+}
+export interface PathPathData {
+  type: "Path";
+  data: string[];
+}
+export interface ShapePathData {
+  type: "Shape";
+  data: string[];
 }

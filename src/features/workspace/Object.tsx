@@ -1,33 +1,33 @@
-import {
-  ObjectHandle,
-  useGetObjectQuery,
-} from "../../app/slvs/slvsObjectsSlice";
-import { usePathData } from "../../common/hooks/usePathData";
+import { useGetPathQuery } from "../../app/slvs/slvsObjectsSlice";
+import { ObjectHandle } from "../../common/types";
 
-export default function SlvsObject({
-  objectHandle,
-}: {
-  objectHandle: ObjectHandle;
-}) {
-  let { data: segments } = useGetObjectQuery(objectHandle);
-  // let pathData = usePathData(segments);
+export default function Object({ handle }: { handle: ObjectHandle }) {
+  let { data: path } = useGetPathQuery(handle);
 
-  // console.log(pathData);
-
-  return (
+  return path?.type === "Circle" ? (
+    <circle
+      cx={path.data.center.coords[0]}
+      cy={path.data.center.coords[1]}
+      r={path.data.radius}
+      stroke="black"
+      strokeWidth={2}
+      fillOpacity={0}
+    ></circle>
+  ) : path?.type === "Path" ? (
     <path
-      // d={
-      //   // pathCommands &&
-      //   // pathCommands
-      //   //   .map(({ moveTo, line, closePath }) =>
-      //   //     [moveTo, line, closePath].join(" ")
-      //   //   )
-      //   //   .join(" ")
-      //   ""
-      // }
+      d={path.data.join(" ")}
       stroke="black"
       strokeWidth={2}
       fillOpacity={0}
     ></path>
+  ) : path?.type === "Shape" ? (
+    <path
+      d={path.data.join(" ") + "Z"}
+      stroke="black"
+      strokeWidth={2}
+      fillOpacity={0}
+    ></path>
+  ) : (
+    <></>
   );
 }

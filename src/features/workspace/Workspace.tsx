@@ -1,12 +1,12 @@
 import { useGetObjectsQuery } from "../../app/slvs/slvsObjectsSlice";
 import { useAppDispatch } from "../../app/store";
 import { setCoord } from "../cursor/cursorSlice";
-import SlvsObject from "./Object";
+import Object from "./Object";
 import style from "./Workspace.module.css";
 
 export default function Workspace() {
   const dispatch = useAppDispatch();
-  // const { data: objects } = useGetObjectsQuery();
+  const { data: objects } = useGetObjectsQuery();
 
   return (
     <div className={style.workspace}>
@@ -18,24 +18,13 @@ export default function Workspace() {
           dispatch(setCoord([e.nativeEvent.offsetX, e.nativeEvent.offsetY]))
         }
       >
-        {/* {objects &&
+        {objects &&
           objects.map((objectHandle) => (
-            <SlvsObject
+            <Object
               key={`thingy_${objectHandle}`}
-              objectHandle={objectHandle}
-            ></SlvsObject>
-          ))} */}
-
-        {/* {entities &&
-          Object.entries(entities).map(([handle, entityData]) => {
-            return (
-              <EntityPath
-                key={`entity_${handle}`}
-                handle={parseInt(handle)}
-                entityData={entityData}
-              ></EntityPath>
-            );
-          })} */}
+              handle={objectHandle}
+            ></Object>
+          ))}
       </svg>
     </div>
   );

@@ -1,4 +1,7 @@
-use crate::{entities::PointData, Canvas, Drawing};
+use crate::{
+    entities::{CircleData, PointData},
+    Canvas, Drawing,
+};
 use serde::{Deserialize, Serialize};
 use slvs::{
     constraint::{PointsCoincident, SomeConstraintHandle},
@@ -40,16 +43,31 @@ pub fn path(handle: Group, sys_state: State<Drawing>) -> Result<PathData, &'stat
                 .iter()
                 .map(|segment| segment.as_path(&sys))
                 .collect();
-            Ok(PathData::Path { segments: path? })
+            Ok(PathData::Path { data: path? })
         }
         Object::Shape { segments } => {
             let path: Result<Vec<_>, _> = segments
                 .iter()
                 .map(|segment| segment.as_path(&sys))
                 .collect();
-            Ok(PathData::Shape { segments: path? })
+            Ok(PathData::Shape { data: path? })
         }
-        Object::Circle { .. } => Err("Expected object to be a path or shape"),
+        Object::Circle { handle } => {
+            let handle: EntityHandle<Circle> = handle.try_into().unwrap();
+            let data = sys.entity_data(&handle)?;
+
+            let center = PointData::from_sys(&sys, &data.center)?;
+            let radius = sys.entity_data(&data.radius)?.val;
+
+            Ok(PathData::Circle {
+                data: CircleData {
+                    handle: handle.into(),
+                    group: data.group,
+                    center,
+                    radius,
+                },
+            })
+        }
     }
 }
 
@@ -210,7 +228,7 @@ pub struct Segment {
 
 impl Segment {
     pub fn as_path(&self, sys: &MutexGuard<'_, System>) -> Result<String, &'static str> {
-        let mut path = format!("M {}, {}", self.from.coords[0], self.from.coords[1]);
+        let mut path = format!("M {}, {} ", self.from.coords[0], self.from.coords[1]);
 
         if let Ok(handle) = EntityHandle::<ArcOfCircle>::try_from(self.via) {
             let data = sys.entity_data(&handle)?;
@@ -242,7 +260,7 @@ impl Segment {
                 if self.from.handle == data.arc_start.into() {
                     path.push_str(
                         format!(
-                            "A, {}, {}, {}, 0, {}, {}",
+                            "A {}, {}, 0, {}, 1, {}, {}",
                             radius,
                             radius,
                             if angle < 180.0 { 0 } else { 1 },
@@ -254,7 +272,7 @@ impl Segment {
                 } else {
                     path.push_str(
                         format!(
-                            "A, {}, {}, {}, 1, {}, {}",
+                            "A {}, {}, 0, {}, 0, {}, {}",
                             radius,
                             radius,
                             if angle < 180.0 { 0 } else { 1 },
@@ -330,8 +348,9 @@ impl Segment {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum PathData {
-    Path { segments: Vec<String> },
-    Shape { segments: Vec<String> },
+    Circle { data: CircleData },
+    Path { data: Vec<String> },
+    Shape { data: Vec<String> },
 }
 
 // Current assumptions

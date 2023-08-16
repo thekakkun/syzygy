@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api";
 
 import { slvsSlice } from "./slvsSlice";
-import { SyzygyObject, ObjectHandle } from "../../common/types";
+import { SyzygyObject, ObjectHandle, PathData } from "../../common/types";
 
 export const slvsObjectsSlice = slvsSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -28,7 +28,20 @@ export const slvsObjectsSlice = slvsSlice.injectEndpoints({
       },
       providesTags: ["Object"],
     }),
+    getPath: builder.query<PathData, ObjectHandle>({
+      queryFn: async (handle) => {
+        try {
+          let path: PathData = await invoke("path", { handle });
+          console.log(path);
+          return { data: path };
+        } catch (err) {
+          console.log(`error getting path ${handle}: ${err}`);
+          return { error: err as string };
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetObjectsQuery, useGetObjectQuery } = slvsObjectsSlice;
+export const { useGetObjectsQuery, useGetObjectQuery, useGetPathQuery } =
+  slvsObjectsSlice;

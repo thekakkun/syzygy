@@ -119,10 +119,10 @@ pub struct ArcOfCircleData {
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub struct CircleData {
-    handle: SomeEntityHandle,
-    group: Group,
-    center: PointData,
-    radius: f64,
+    pub handle: SomeEntityHandle,
+    pub group: Group,
+    pub center: PointData,
+    pub radius: f64,
 }
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
