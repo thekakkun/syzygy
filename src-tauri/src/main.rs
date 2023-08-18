@@ -8,9 +8,7 @@ mod objects;
 
 use slvs::{
     constraint::PointsCoincident,
-    entity::{
-        ArcOfCircle, Circle, Cubic, Distance, EntityHandle, LineSegment, Normal, Point, Workplane,
-    },
+    entity::{ArcOfCircle, Circle, Cubic, Distance, LineSegment, Normal, Point, Workplane},
     group::Group,
     system::SolveResult,
     utils::make_quaternion,
@@ -20,8 +18,7 @@ use std::sync::Mutex;
 use tauri::{Manager, State};
 
 pub struct Drawing(Mutex<System>);
-
-pub struct Canvas(EntityHandle<Workplane>);
+pub struct CanvasGroup(Group);
 
 #[tauri::command]
 fn solve(handle: Group, sys_state: State<Drawing>) -> Result<i32, &'static str> {
@@ -37,13 +34,13 @@ fn main() {
     tauri::Builder::default()
         .setup(|app| {
             let mut sys = System::new();
-            let g = sys.add_group();
-            let origin = sys.sketch(Point::new_in_3d(g, [0.0, 0.0, 0.0]))?;
+            let canvas_group = sys.add_group();
+            let origin = sys.sketch(Point::new_in_3d(canvas_group, [0.0, 0.0, 0.0]))?;
             let normal = sys.sketch(Normal::new_in_3d(
-                g,
+                canvas_group,
                 make_quaternion([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]),
             ))?;
-            let canvas = sys.sketch(Workplane::new(g, origin, normal))?;
+            let canvas = sys.sketch(Workplane::new(canvas_group, origin, normal))?;
 
             // Draw a circle
             let circle_group = sys.add_group();
@@ -208,7 +205,7 @@ fn main() {
                 .expect("constraint added");
 
             app.manage(Drawing(Mutex::new(sys)));
-            app.manage(Canvas(canvas));
+            app.manage(CanvasGroup(canvas_group));
 
             Ok(())
         })
@@ -218,6 +215,7 @@ fn main() {
             groups::get_group,
             groups::add_group,
             groups::delete_group,
+            entities::entities,
             entities::entity,
             objects::objects,
             objects::object,

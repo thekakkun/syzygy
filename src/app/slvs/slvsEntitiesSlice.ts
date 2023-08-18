@@ -5,6 +5,19 @@ import { Entity, EntityHandle } from "../../common/types";
 
 export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getEntities: builder.query<EntityHandle[], void>({
+      queryFn: async () => {
+        try {
+          let entities: EntityHandle[] = await invoke("entities");
+          console.log(entities);
+          return { data: entities };
+        } catch (err) {
+          console.log(`error getting entities: ${err}`);
+          return { error: err as string };
+        }
+      },
+    }),
+
     getEntity: builder.query<Entity, EntityHandle>({
       queryFn: async (entityHandle) => {
         try {
@@ -22,7 +35,7 @@ export const slvsEntitiesSlice = slvsSlice.injectEndpoints({
   }),
 });
 
-export const { useGetEntityQuery } = slvsEntitiesSlice;
+export const { useGetEntitiesQuery, useGetEntityQuery } = slvsEntitiesSlice;
 
 // export interface Entities {
 //   [handle: number]: EntityData;

@@ -1,4 +1,4 @@
-use crate::Drawing;
+use crate::{CanvasGroup, Drawing};
 use serde::{Deserialize, Serialize};
 use slvs::{
     entity::{ArcOfCircle, Circle, Cubic, EntityHandle, LineSegment, Point, SomeEntityHandle},
@@ -8,6 +8,23 @@ use slvs::{
 };
 use std::sync::MutexGuard;
 use tauri::State;
+
+#[tauri::command]
+pub fn entities(
+    sys_state: State<Drawing>,
+    canvas_g_state: State<CanvasGroup>,
+) -> Vec<SomeEntityHandle> {
+    let sys = sys_state.0.lock().unwrap();
+    let canvas_g = canvas_g_state.0;
+
+    let canvas_entity_handles = sys.entity_handles(Some(&canvas_g), None);
+
+    sys.entity_handles(None, None)
+        .iter()
+        .filter(|handle| !canvas_entity_handles.contains(handle))
+        .copied()
+        .collect()
+}
 
 #[tauri::command]
 pub fn entity(

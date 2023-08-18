@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{Canvas, Drawing};
+use crate::{CanvasGroup, Drawing};
 use serde::Serialize;
 use slvs::{element::AsHandle, entity::SomeEntityHandle, group::Group};
 use tauri::State;
@@ -13,16 +13,15 @@ pub struct GroupData {
 #[tauri::command]
 pub fn get_groups(
     sys_state: State<Drawing>,
-    canvas_state: State<Canvas>,
+    canvas_g_state: State<CanvasGroup>,
 ) -> HashMap<u32, GroupData> {
     let sys = sys_state.0.lock().unwrap();
-    let canvas = canvas_state.0;
-    let canvas_group = sys.entity_data(&canvas).unwrap().group;
+    let canvas_g = canvas_g_state.0;
 
     let mut groups = HashMap::new();
     sys.groups()
         .iter()
-        .filter(|&group| *group != canvas_group)
+        .filter(|&group| *group != canvas_g)
         .for_each(|group| {
             let entities = sys
                 .entity_handles(Some(group), None)

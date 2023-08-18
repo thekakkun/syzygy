@@ -1,6 +1,6 @@
 use crate::{
     entities::{CircleData, PointData},
-    Canvas, Drawing,
+    CanvasGroup, Drawing,
 };
 use serde::{Deserialize, Serialize};
 use slvs::{
@@ -15,14 +15,13 @@ use std::sync::MutexGuard;
 use tauri::State;
 
 #[tauri::command]
-pub fn objects(sys_state: State<Drawing>, canvas_state: State<Canvas>) -> Vec<Group> {
+pub fn objects(sys_state: State<Drawing>, canvas_g_state: State<CanvasGroup>) -> Vec<Group> {
     let sys = sys_state.0.lock().unwrap();
-    let canvas = canvas_state.0;
-    let canvas_group = sys.entity_data(&canvas).unwrap().group;
+    let canvas_g = canvas_g_state.0;
 
     sys.groups()
         .iter()
-        .filter(|&group| *group != canvas_group)
+        .filter(|&group| *group != canvas_g)
         .copied()
         .collect()
 }
